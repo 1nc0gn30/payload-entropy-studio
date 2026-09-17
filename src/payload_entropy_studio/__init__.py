@@ -12,8 +12,13 @@ from payload_entropy_studio.deobfuscator import (
 from payload_entropy_studio.entropy_engine import (
     EntropyClassification,
     EntropyReport,
+    StatisticalRandomnessReport,
     analyze_entropy_profile,
+    analyze_statistical_randomness,
+    calculate_chi_square,
+    calculate_serial_correlation,
     calculate_shannon_entropy,
+    estimate_monte_carlo_pi,
 )
 from payload_entropy_studio.mcp_server import MCPServer, run_mcp_server
 from payload_entropy_studio.threat_analyzer import (
@@ -34,9 +39,15 @@ __all__ = [
     "DeobfuscationResult",
     "calculate_shannon_entropy",
     "analyze_entropy_profile",
+    "calculate_chi_square",
+    "estimate_monte_carlo_pi",
+    "calculate_serial_correlation",
+    "analyze_statistical_randomness",
     "EntropyReport",
     "EntropyClassification",
+    "StatisticalRandomnessReport",
     "generate_waf_rules",
     "MCPServer",
     "run_mcp_server",
 ]
+
