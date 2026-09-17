@@ -16,7 +16,7 @@
 - 🔓 **Recursive De-obfuscation Engine**: Unmasks multi-layered evasions across URL percent encoding (including double/triple encoding), Hex escapes, Unicode escapes, Base64 blocks, HTML entities, and string concatenations.
 - 📊 **Shannon Entropy & Kolmogorov Complexity Profiler**: Computes global and sliding-window byte entropy ($H(X)$ from 0.0 to 8.0 bits/byte) to instantly detect encrypted reverse shells, packed payloads, and shellcode.
 - 🧱 **Automated WAF & IDS Rule Generator**: Automatically synthesizes production-ready defense rules in **ModSecurity 3 / OWASP CRS**, **Cloudflare WAF Expression**, **AWS WAF v2 JSON**, and **Suricata IDS**.
-- 🎨 **Google Material 3 Light Mode Web UI**: Real-time payload decoder, entropy spectrum visualizer, interactive attack sample library, and 1-click rule copy.
+- 🎨 **Payload Entropy Studio Web UI**: Real-time payload decoder, entropy spectrum visualizer, interactive attack sample library, and 1-click rule copy (design influenced by Material 3 tokens).
 - ⚡ **Zero Third-Party Runtime Dependencies**: 100% Python Standard Library runtime (`re`, `math`, `zlib`, `collections`, `urllib`, `html`, `base64`, `http.server`, `argparse`).
 - 🤖 **FastMCP Server Protocol**: Full Model Context Protocol (MCP) JSON-RPC 2.0 stdio server for Claude Desktop, Cursor, Cline, and autonomous AI agents.
 
@@ -51,7 +51,7 @@ payload-entropy entropy "payload.bin" --window-size 32
 # Synthesize WAF rules (ModSecurity, Cloudflare, AWS WAF, Suricata)
 payload-entropy waf "1' UNION SELECT 1,username,password FROM users--"
 
-# Launch Google Material 3 Payload Studio Web UI
+# Launch Payload Studio Web UI (Material 3 influenced)
 payload-entropy serve --port 8095
 
 # Start FastMCP stdio server for LLM agents
@@ -131,7 +131,7 @@ flowchart TD
     subgraph Interfaces["🖥️ Multi-Channel Interfaces"]
         CLI["💻 CLI Entrypoint\n(payload-entropy / python -m)"]
         MCP["🤖 FastMCP Stdio Server\n(Claude / Cursor / Cline)"]
-        UI["🎨 Google Material 3 Studio\n(Waveform Canvas & 256-Bin Spectrum)"]
+        UI["🎨 Payload Entropy Studio\n(Waveform Canvas & 256-Bin Spectrum)"]
     end
 
     Raw --> Deobf

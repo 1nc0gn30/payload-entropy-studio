@@ -70,4 +70,4 @@ def test_ui_index_html(live_server):
         assert resp.status == 200
         content = resp.read().decode("utf-8")
         assert "<!DOCTYPE html>" in content
-        assert "Google Payload & Entropy Studio" in content
+        assert "Payload & Entropy Studio" in content
