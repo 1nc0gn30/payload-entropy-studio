@@ -31,6 +31,7 @@ class EntropyReport:
     byte_frequencies: Dict[int, int]  # Top byte distribution
     char_classes: Dict[str, float]  # Percentages: printable, whitespace, control, high_bit, special
     sliding_window_profile: List[Dict[str, Any]] = field(default_factory=list)
+    byte_distribution_256: List[int] = field(default_factory=lambda: [0] * 256)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -41,6 +42,7 @@ class EntropyReport:
             "compression_ratio": round(self.compression_ratio, 4),
             "char_classes": {k: round(v, 2) for k, v in self.char_classes.items()},
             "sliding_window_profile": self.sliding_window_profile,
+            "byte_distribution_256": self.byte_distribution_256,
         }
 
 
@@ -81,8 +83,9 @@ def analyze_entropy_profile(
             is_suspicious_entropy=False,
             compression_ratio=1.0,
             byte_frequencies={},
-            char_classes={"printable": 0.0, "whitespace": 0.0, "control": 0.0, "high_bit": 0.0, "special": 0.0},
-            sliding_window_profile=[]
+            char_classes={"printable_pct": 0.0, "whitespace_pct": 0.0, "control_pct": 0.0, "high_bit_pct": 0.0, "special_pct": 0.0},
+            sliding_window_profile=[],
+            byte_distribution_256=[0] * 256,
         )
 
     # 1. Global Shannon Entropy
@@ -109,34 +112,46 @@ def analyze_entropy_profile(
     except Exception:
         comp_ratio = 1.0
 
-    # 4. Character Classes
-    printable = sum(1 for b in raw if 32 <= b <= 126)
-    whitespace = sum(1 for b in raw if b in (9, 10, 13, 32))
-    control = sum(1 for b in raw if b < 32 and b not in (9, 10, 13))
-    high_bit = sum(1 for b in raw if b >= 128)
-    special = sum(1 for b in raw if 32 <= b <= 126 and not (48 <= b <= 57 or 65 <= b <= 90 or 97 <= b <= 122 or b == 32))
+    # 4. Fast 256-bin Byte Distribution & Character Classes (Single Pass)
+    dist = [0] * 256
+    for b in raw:
+        dist[b] += 1
 
+    printable = sum(dist[32:127])
+    whitespace = dist[9] + dist[10] + dist[13] + dist[32]
+    control = sum(dist[:32]) - (dist[9] + dist[10] + dist[13])
+    high_bit = sum(dist[128:256])
+    alphanumeric_space = sum(dist[48:58]) + sum(dist[65:91]) + sum(dist[97:123]) + dist[32]
+    special = max(0, printable - alphanumeric_space)
+
+    inv_len = 100.0 / length
     char_classes = {
-        "printable_pct": (printable / length) * 100.0,
-        "whitespace_pct": (whitespace / length) * 100.0,
-        "control_pct": (control / length) * 100.0,
-        "high_bit_pct": (high_bit / length) * 100.0,
-        "special_pct": (special / length) * 100.0,
+        "printable_pct": printable * inv_len,
+        "whitespace_pct": whitespace * inv_len,
+        "control_pct": control * inv_len,
+        "high_bit_pct": high_bit * inv_len,
+        "special_pct": special * inv_len,
     }
 
     # 5. Top Byte Frequencies
     byte_counts = collections.Counter(raw)
     top_frequencies = dict(byte_counts.most_common(10))
 
-    # 6. Sliding Window Profile
+    # 6. Sliding Window Profile (Adaptive for short & long payloads)
     sliding_profile = []
-    if length >= window_size:
-        for offset in range(0, length - window_size + 1, step_size):
-            chunk = raw[offset: offset + window_size]
+    eff_window = window_size
+    eff_step = step_size
+    if length < window_size and length >= 8:
+        eff_window = max(4, length // 3)
+        eff_step = max(1, length // 10)
+
+    if length >= eff_window:
+        for offset in range(0, length - eff_window + 1, eff_step):
+            chunk = raw[offset: offset + eff_window]
             chunk_entropy = calculate_shannon_entropy(chunk)
             sliding_profile.append({
                 "offset": offset,
-                "window_size": window_size,
+                "window_size": eff_window,
                 "entropy": round(chunk_entropy, 3),
                 "is_spike": chunk_entropy >= 6.5
             })
@@ -149,5 +164,6 @@ def analyze_entropy_profile(
         compression_ratio=comp_ratio,
         byte_frequencies=top_frequencies,
         char_classes=char_classes,
-        sliding_window_profile=sliding_profile
+        sliding_window_profile=sliding_profile,
+        byte_distribution_256=dist,
     )

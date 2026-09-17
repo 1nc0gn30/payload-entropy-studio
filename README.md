@@ -87,6 +87,91 @@ Add `payload-entropy-studio` to your Claude Desktop or Cursor configuration:
 
 ---
 
+## 📐 Mathematical Foundations
+
+### Shannon Entropy Formulation
+Shannon Entropy measures the average rate at which information is produced by a stochastic data source. For an arbitrary payload of bytes $X = (x_1, x_2, \dots, x_N)$ over the byte alphabet $\Sigma = \{0, 1, \dots, 255\}$:
+
+$$H(X) = -\sum_{i=0}^{255} p(x_i) \log_2 p(x_i) \quad (\text{bits per byte})$$
+
+where $p(x_i) = \frac{\text{count}(x_i)}{N}$ denotes the empirical probability of occurrence for byte value $x_i$.
+
+### Entropy Threshold Classification Spectrum
+
+| Entropy Range ($H(X)$) | Classification | Typical Payloads & Attack Signatures |
+| :--- | :--- | :--- |
+| **0.00 – 1.50 bits** | Uniform / Highly Repetitive | Padding sequences (`\x00*1000`), NOP sleds (`\x90*500`) |
+| **1.50 – 4.50 bits** | Natural Language & HTML | Plaintext HTTP requests, JSON bodies, English queries |
+| **4.50 – 5.60 bits** | Source Code & Scripts | JavaScript vectors, SQL queries, PHP scripts |
+| **5.60 – 6.80 bits** | Obfuscated & Encoded Data | Base64-encoded blobs, URL-encoded exploit chains |
+| **6.80 – 8.00 bits** | High-Entropy / Packed / Crypto | Polymorphic shellcode, encrypted C2 payloads, AES ciphertext |
+
+### Kolmogorov Complexity Approximation
+Because true algorithmic Kolmogorov Complexity $K(s)$ is formally uncomputable, this studio computes a practical upper bound via DEFLATE/Zlib algorithmic compression ratio:
+
+$$\hat{K}(s) = \frac{|\text{Compress}(s)|}{|s|}$$
+
+---
+
+## 🏛️ Architecture
+
+```mermaid
+flowchart TD
+    subgraph Input["📥 Ingestion Layer"]
+        Raw["Raw Inbound Request / Payload"]
+    end
+
+    subgraph Core["⚙️ Analysis Engine (Zero Runtime Deps)"]
+        Deobf["🔓 Recursive De-obfuscator\n(URL, Hex, Base64, Unicode, Entities)"]
+        Entropy["📊 Fast 256-Bin Entropy Engine\n(Shannon H(X), Sliding Window, Zlib)"]
+        Threat["🛡️ Signature Matcher\n(CWE, MITRE ATT&CK, Regex Engine)"]
+        WAF["🧱 Rule Synthesizer\n(ModSec CRS, Cloudflare, AWS, Suricata)"]
+    end
+
+    subgraph Interfaces["🖥️ Multi-Channel Interfaces"]
+        CLI["💻 CLI Entrypoint\n(payload-entropy / python -m)"]
+        MCP["🤖 FastMCP Stdio Server\n(Claude / Cursor / Cline)"]
+        UI["🎨 Google Material 3 Studio\n(Waveform Canvas & 256-Bin Spectrum)"]
+    end
+
+    Raw --> Deobf
+    Deobf --> Entropy
+    Deobf --> Threat
+    Threat --> WAF
+    Entropy --> Interfaces
+    Threat --> Interfaces
+    WAF --> Interfaces
+```
+
+---
+
+## 🐍 Python SDK API Reference
+
+```python
+from payload_entropy_studio.entropy_engine import analyze_entropy_profile, calculate_shannon_entropy
+from payload_entropy_studio.threat_analyzer import ThreatAnalyzer
+from payload_entropy_studio.waf_generator import generate_waf_rules
+
+# 1. Calculate Shannon Entropy & 256-bin spectrum
+report = analyze_entropy_profile("SELECT * FROM users WHERE id=1;")
+print(f"Entropy: {report.shannon_entropy:.2f} bits/byte")
+print(f"Classification: {report.classification.value}")
+print(f"Printable ASCII: {report.char_classes['printable_pct']:.1f}%")
+
+# 2. Perform deep multi-vector threat analysis
+analyzer = ThreatAnalyzer()
+threat_report = analyzer.analyze("<script>alert(document.cookie)</script>")
+print(f"Threat: {threat_report.primary_threat} (Score: {threat_report.risk_score}/100)")
+print(f"CWE: {threat_report.cwe_mappings}")
+print(f"MITRE ATT&CK: {threat_report.mitre_attack_mappings}")
+
+# 3. Synthesize production WAF rules
+rules = generate_waf_rules(threat_report)
+print(rules["modsecurity"])
+```
+
+---
+
 ## 🧪 Running Tests
 
 ```bash
@@ -98,3 +183,4 @@ pytest -v
 ## 📜 License
 
 MIT License © 2026 1nc0gn30
+

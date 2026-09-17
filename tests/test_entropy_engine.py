@@ -34,3 +34,22 @@ def test_empty_entropy_profile():
     rep = analyze_entropy_profile("")
     assert rep.total_bytes == 0
     assert rep.shannon_entropy == 0.0
+    assert len(rep.byte_distribution_256) == 256
+
+
+def test_byte_distribution_and_adaptive_window():
+    # Test 256-bin distribution
+    data = b"ABC" * 10 + bytes([0x00, 0xFF])
+    rep = analyze_entropy_profile(data)
+    assert len(rep.byte_distribution_256) == 256
+    assert rep.byte_distribution_256[ord("A")] == 10
+    assert rep.byte_distribution_256[ord("B")] == 10
+    assert rep.byte_distribution_256[ord("C")] == 10
+    assert rep.byte_distribution_256[0x00] == 1
+    assert rep.byte_distribution_256[0xFF] == 1
+    # Check adaptive sliding window on short payload (len = 32)
+    assert len(rep.sliding_window_profile) > 0
+    d = rep.to_dict()
+    assert "byte_distribution_256" in d
+    assert len(d["byte_distribution_256"]) == 256
+
