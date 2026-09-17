@@ -215,6 +215,18 @@ class PayloadHTTPHandler(BaseHTTPRequestHandler):
             })
             return
 
+        elif path == "/api/polyglot":
+            from payload_entropy_studio.polyglot_analyzer import analyze_polyglot_payload
+            rep = analyze_polyglot_payload(payload)
+            self._send_json(rep.to_dict())
+            return
+
+        elif path == "/api/ast-obfuscation":
+            from payload_entropy_studio.ast_obfuscation_detector import analyze_ast_obfuscation
+            rep = analyze_ast_obfuscation(payload)
+            self._send_json(rep.to_dict())
+            return
+
         self._send_json({"error": f"Endpoint not found: {path}"}, status=404)
 
     def log_message(self, format: str, *args: Any) -> None:

@@ -72,6 +72,16 @@ def build_parser() -> argparse.ArgumentParser:
     p_waf.add_argument("payload", help="Target payload string or file path")
     p_waf.add_argument("-t", "--type", choices=["all", "modsecurity", "cloudflare", "aws", "suricata"], default="all")
 
+    # polyglot
+    p_poly = sub.add_parser("polyglot", parents=[base], help="Detect dual-context polyglots and multi-format magic byte evasions")
+    p_poly.add_argument("payload", help="Target payload string or file path")
+    p_poly.add_argument("--json", action="store_true", help="Output polyglot audit report as JSON")
+
+    # ast
+    p_ast = sub.add_parser("ast", parents=[base], help="Analyze structural AST evasion and obfuscated grammar")
+    p_ast.add_argument("payload", help="Target script/query string or file path")
+    p_ast.add_argument("--json", action="store_true", help="Output AST obfuscation report as JSON")
+
     # serve
     p_serve = sub.add_parser("serve", parents=[base], help="Start Payload Studio Web UI (Material 3 influenced)")
     p_serve.add_argument("--host", default="0.0.0.0", help="Host address (default: 0.0.0.0)")
@@ -182,6 +192,57 @@ def main(argv: Optional[List[str]] = None) -> int:
         else:
             target_key = "aws_waf" if args.type == "aws" else args.type
             print(rules.get(target_key, ""))
+        return 0
+
+    elif args.command == "polyglot":
+        from payload_entropy_studio.polyglot_analyzer import analyze_polyglot_payload
+        text = get_input_str(args.payload)
+        rep = analyze_polyglot_payload(text)
+
+        if args.json:
+            print(json.dumps(rep.to_dict(), indent=2))
+        else:
+            print(f"\n{c.BOLD}🧬 Polyglot Multi-Format File Payload Audit{c.RESET}")
+            print(f"  Is Polyglot     : {c.RED if rep.is_polyglot else c.GREEN}{rep.is_polyglot}{c.RESET}")
+            print(f"  Classification  : {c.CYAN}{rep.polyglot_class}{c.RESET}")
+            print(f"  Risk Score      : {c.BOLD}{rep.risk_score}/100.0{c.RESET}")
+            print(f"  Detected Formats: {', '.join(rep.detected_formats) if rep.detected_formats else 'Unclassified Text'}")
+            if rep.embedded_scripts:
+                print(f"\n  {c.BOLD}Embedded Scripts & Execution Hooks:{c.RESET}")
+                for s in rep.embedded_scripts:
+                    print(f"    • {s}")
+            if rep.structural_anomalies:
+                print(f"\n  {c.BOLD}Structural Anomalies:{c.RESET}")
+                for a in rep.structural_anomalies:
+                    print(f"    • {a}")
+            if rep.mitigation_advice:
+                print(f"\n  {c.BOLD}Mitigation Recommendations:{c.RESET}")
+                for m in rep.mitigation_advice:
+                    print(f"    • {m}")
+            print()
+        return 0
+
+    elif args.command == "ast":
+        from payload_entropy_studio.ast_obfuscation_detector import analyze_ast_obfuscation
+        text = get_input_str(args.payload)
+        rep = analyze_ast_obfuscation(text)
+
+        if args.json:
+            print(json.dumps(rep.to_dict(), indent=2))
+        else:
+            print(f"\n{c.BOLD}🔍 Structural AST Obfuscation & Evasion Audit{c.RESET}")
+            print(f"  Obfuscation     : {c.RED if rep.obfuscation_detected else c.GREEN}{rep.obfuscation_detected}{c.RESET}")
+            print(f"  Complexity Score: {c.BOLD}{rep.complexity_score}/100.0{c.RESET}")
+            print(f"  Evasion Methods : {', '.join(rep.evasion_techniques) if rep.evasion_techniques else 'None'}")
+            if rep.detected_constructs:
+                print(f"\n  {c.BOLD}Detected Obfuscated AST Constructs ({len(rep.detected_constructs)}):{c.RESET}")
+                for c_item in rep.detected_constructs:
+                    print(f"    • [{c_item['category']}] {c_item['description']} -> '{c_item['matched_text'][:40]}'")
+            if rep.deobfuscation_hints:
+                print(f"\n  {c.BOLD}Deobfuscation Hints:{c.RESET}")
+                for h in rep.deobfuscation_hints:
+                    print(f"    • {h}")
+            print()
         return 0
 
     elif args.command == "serve":

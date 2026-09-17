@@ -98,6 +98,34 @@ class MCPServer:
                     "type": "object",
                     "properties": {}
                 }
+            },
+            {
+                "name": "payload_polyglot_audit",
+                "description": "Analyze raw payload or file stream to detect dual-context polyglots (GIF+JS, PNG+PHP, PDF+JS, JPEG+ZIP, SVG+XSS) and multi-format magic byte evasions.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "payload": {
+                            "type": "string",
+                            "description": "Raw string, hex representation, or base64 data to inspect for polyglot characteristics."
+                        }
+                    },
+                    "required": ["payload"]
+                }
+            },
+            {
+                "name": "payload_ast_obfuscation",
+                "description": "Analyze scripts and queries for structural AST evasion, dynamic evaluation wrappers, environment variable splitting, and bracket property lookups.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "payload": {
+                            "type": "string",
+                            "description": "Script or query code snippet to analyze for AST obfuscation."
+                        }
+                    },
+                    "required": ["payload"]
+                }
             }
         ]
 
@@ -171,6 +199,32 @@ class MCPServer:
                             "zero_dependencies": True,
                             "status": "HEALTHY"
                         }, indent=2)
+                    }
+                ]
+            }
+
+        elif tool_name == "payload_polyglot_audit":
+            from payload_entropy_studio.polyglot_analyzer import analyze_polyglot_payload
+            payload = arguments["payload"]
+            rep = analyze_polyglot_payload(payload)
+            return {
+                "content": [
+                    {
+                        "type": "text",
+                        "text": json.dumps(rep.to_dict(), indent=2)
+                    }
+                ]
+            }
+
+        elif tool_name == "payload_ast_obfuscation":
+            from payload_entropy_studio.ast_obfuscation_detector import analyze_ast_obfuscation
+            payload = arguments["payload"]
+            rep = analyze_ast_obfuscation(payload)
+            return {
+                "content": [
+                    {
+                        "type": "text",
+                        "text": json.dumps(rep.to_dict(), indent=2)
                     }
                 ]
             }

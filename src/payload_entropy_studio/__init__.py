@@ -5,6 +5,10 @@ Zero external runtime dependencies.
 
 from __future__ import annotations
 
+from payload_entropy_studio.ast_obfuscation_detector import (
+    ASTObfuscationReport,
+    analyze_ast_obfuscation,
+)
 from payload_entropy_studio.deobfuscator import (
     DeobfuscationEngine,
     DeobfuscationResult,
@@ -21,6 +25,11 @@ from payload_entropy_studio.entropy_engine import (
     estimate_monte_carlo_pi,
 )
 from payload_entropy_studio.mcp_server import MCPServer, run_mcp_server
+from payload_entropy_studio.polyglot_analyzer import (
+    PolyglotReport,
+    analyze_polyglot_payload,
+    detect_file_formats,
+)
 from payload_entropy_studio.threat_analyzer import (
     ThreatAnalyzer,
     ThreatReport,
@@ -49,5 +58,10 @@ __all__ = [
     "generate_waf_rules",
     "MCPServer",
     "run_mcp_server",
+    "PolyglotReport",
+    "analyze_polyglot_payload",
+    "detect_file_formats",
+    "ASTObfuscationReport",
+    "analyze_ast_obfuscation",
 ]
 
