@@ -23,7 +23,14 @@ keywords = [
     "mcp",
     "fastmcp",
     "material-3",
-    "zero-dependencies"
+    "zero-dependencies",
+    "markov",
+    "transition-entropy",
+    "lsh",
+    "simhash",
+    "minhash",
+    "shellcode",
+    "ngram"
 ]
 classifiers = [
     "Development Status :: 4 - Beta",

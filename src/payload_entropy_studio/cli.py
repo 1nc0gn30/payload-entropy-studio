@@ -82,6 +82,23 @@ def build_parser() -> argparse.ArgumentParser:
     p_ast.add_argument("payload", help="Target script/query string or file path")
     p_ast.add_argument("--json", action="store_true", help="Output AST obfuscation report as JSON")
 
+    # markov
+    p_markov = sub.add_parser("markov", parents=[base], help="Analyze N-gram frequencies, Markov transition entropy, and KL divergence")
+    p_markov.add_argument("payload", help="Target payload string or file path")
+    p_markov.add_argument("-n", "--order", type=int, default=2, help="N-gram order (default: 2)")
+    p_markov.add_argument("--json", action="store_true", help="Output Markov report as JSON")
+
+    # lsh
+    p_lsh = sub.add_parser("lsh", aliases=["simhash", "fingerprint"], parents=[base], help="Compute 64-bit SimHash and MinHash locality-sensitive fingerprints")
+    p_lsh.add_argument("payload", help="Target payload string or file path")
+    p_lsh.add_argument("-c", "--compare", default=None, help="Optional second payload to compare similarity against")
+    p_lsh.add_argument("--json", action="store_true", help="Output LSH report as JSON")
+
+    # shellcode
+    p_sc = sub.add_parser("shellcode", parents=[base], help="Detect x86/x64 shellcode, NOP sleds, and decoder stubs")
+    p_sc.add_argument("payload", help="Target payload string or file path")
+    p_sc.add_argument("--json", action="store_true", help="Output shellcode analysis as JSON")
+
     # serve
     p_serve = sub.add_parser("serve", parents=[base], help="Start Payload Studio Web UI (Material 3 influenced)")
     p_serve.add_argument("--host", default="0.0.0.0", help="Host address (default: 0.0.0.0)")
@@ -242,6 +259,101 @@ def main(argv: Optional[List[str]] = None) -> int:
                 print(f"\n  {c.BOLD}Deobfuscation Hints:{c.RESET}")
                 for h in rep.deobfuscation_hints:
                     print(f"    • {h}")
+            print()
+        return 0
+
+    elif args.command == "markov":
+        from payload_entropy_studio.markov_lsh import (
+            analyze_markov_lsh_profile,
+            calculate_ngram_frequencies,
+        )
+        text = get_input_str(args.payload)
+        rep = analyze_markov_lsh_profile(text)
+        ngrams = calculate_ngram_frequencies(text, n=args.order)
+        if args.json:
+            out_d = rep.to_dict()
+            out_d["ngrams"] = ngrams
+            print(json.dumps(out_d, indent=2))
+        else:
+            print(f"\n{c.BOLD}🧬 Markovian Byte Transition & N-Gram Profile{c.RESET}")
+            print(f"  Payload Length       : {rep.payload_length} bytes")
+            print(f"  Transition Entropy   : {c.CYAN}{rep.transition_entropy} bits{c.RESET}")
+            print(f"  KL Divergence (Base) : {c.YELLOW}{rep.kl_divergence} bits{c.RESET}")
+            print(f"  Markov Anomaly State : {'⚠️  ANOMALOUS' if rep.is_anomalous_markov else '✓ NORMAL'}")
+            print(f"\n  {c.BOLD}Top N-Grams (n={args.order}):{c.RESET}")
+            for g, freq in list(ngrams.items())[:8]:
+                print(f"    • {repr(g):<12} : {freq * 100:.2f}%")
+            print()
+        return 0
+
+    elif args.command in ("lsh", "simhash", "fingerprint"):
+        from payload_entropy_studio.markov_lsh import (
+            calculate_hamming_distance,
+            calculate_simhash_similarity,
+            compute_minhash,
+            compute_simhash,
+            estimate_jaccard_similarity,
+            simhash_hex,
+        )
+        text = get_input_str(args.payload)
+        sh1 = compute_simhash(text)
+        mh1 = compute_minhash(text, num_perm=32)
+        cmp_result = None
+        if args.compare:
+            cmp_text = safe_read_text(args.compare) if os.path.isfile(args.compare) else args.compare
+            sh2 = compute_simhash(cmp_text)
+            mh2 = compute_minhash(cmp_text, num_perm=32)
+            dist = calculate_hamming_distance(sh1, sh2)
+            sim = calculate_simhash_similarity(sh1, sh2)
+            jacc = estimate_jaccard_similarity(mh1, mh2)
+            cmp_result = {
+                "other_simhash": simhash_hex(sh2),
+                "hamming_distance": dist,
+                "simhash_similarity": sim,
+                "minhash_jaccard_similarity": jacc,
+            }
+
+        if args.json:
+            res_dict = {
+                "simhash": simhash_hex(sh1),
+                "simhash_int": sh1,
+                "minhash_signature": mh1,
+            }
+            if cmp_result:
+                res_dict["comparison"] = cmp_result
+            print(json.dumps(res_dict, indent=2))
+        else:
+            print(f"\n{c.BOLD}🔑 Locality Sensitive Hashing (LSH) Fingerprint{c.RESET}")
+            print(f"  64-bit SimHash (Hex) : {c.GREEN}{simhash_hex(sh1)}{c.RESET}")
+            print(f"  SimHash (Integer)    : {sh1}")
+            print(f"  MinHash Signature    : {mh1[:6]}... ({len(mh1)} permutations)")
+            if cmp_result:
+                print(f"\n  {c.BOLD}Comparison with Target:{c.RESET}")
+                print(f"    • Other SimHash    : {cmp_result['other_simhash']}")
+                print(f"    • Hamming Distance : {cmp_result['hamming_distance']} bits (out of 64)")
+                print(f"    • SimHash Match    : {cmp_result['simhash_similarity'] * 100:.1f}%")
+                print(f"    • Jaccard Match    : {cmp_result['minhash_jaccard_similarity'] * 100:.1f}%")
+            print()
+        return 0
+
+    elif args.command == "shellcode":
+        from payload_entropy_studio.markov_lsh import detect_shellcode_heuristics
+        text = get_input_str(args.payload)
+        sc_report = detect_shellcode_heuristics(text)
+        if args.json:
+            print(json.dumps(sc_report, indent=2))
+        else:
+            print(f"\n{c.BOLD}⚡ Shellcode & Binary Injection Heuristics{c.RESET}")
+            score_col = c.RED if sc_report["score"] >= 0.5 else (c.YELLOW if sc_report["score"] >= 0.3 else c.GREEN)
+            print(f"  Shellcode Score      : {score_col}{sc_report['score'] * 100:.1f}/100{c.RESET}")
+            print(f"  Probable Shellcode   : {'🚨 YES' if sc_report['is_probable_shellcode'] else '✓ NO'}")
+            print(f"  NOP Sled Detected    : {'⚠️ YES' if sc_report['nop_sled_detected'] else 'NO'}")
+            print(f"  GetPC Routine        : {'⚠️ YES' if sc_report['getpc_detected'] else 'NO'}")
+            print(f"  Syscall Invocations  : {'⚠️ YES' if sc_report['syscall_detected'] else 'NO'}")
+            if sc_report["indicators"]:
+                print(f"\n  {c.BOLD}Detected Indicators ({len(sc_report['indicators'])}):{c.RESET}")
+                for ind in sc_report["indicators"]:
+                    print(f"    • {ind}")
             print()
         return 0
 

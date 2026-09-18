@@ -126,6 +126,57 @@ class MCPServer:
                     },
                     "required": ["payload"]
                 }
+            },
+            {
+                "name": "payload_markov_profile",
+                "description": "Compute N-gram frequency distribution, first-order Markov transition probability matrix, conditional transition entropy, and Kullback-Leibler divergence from baseline.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "payload": {
+                            "type": "string",
+                            "description": "Payload string or hex representation."
+                        },
+                        "ngram_order": {
+                            "type": "integer",
+                            "default": 2,
+                            "description": "N-gram order (1, 2, or 3)."
+                        }
+                    },
+                    "required": ["payload"]
+                }
+            },
+            {
+                "name": "payload_lsh_fingerprint",
+                "description": "Compute 64-bit SimHash and MinHash locality-sensitive fingerprints with Hamming distance metrics for detecting polymorphic payload mutations.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "payload": {
+                            "type": "string",
+                            "description": "Payload string or hex representation."
+                        },
+                        "compare_with": {
+                            "type": "string",
+                            "description": "Optional second payload to compare similarity against."
+                        }
+                    },
+                    "required": ["payload"]
+                }
+            },
+            {
+                "name": "payload_detect_shellcode",
+                "description": "Analyze binary, shellcode, or hex payloads for x86/x64 NOP sleds, call/pop GetPC stubs, syscall/int80 patterns, XOR decoder loops, and non-printable byte density.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "payload": {
+                            "type": "string",
+                            "description": "Raw, escaped (\\x90), or hex string payload."
+                        }
+                    },
+                    "required": ["payload"]
+                }
             }
         ]
 
@@ -225,6 +276,76 @@ class MCPServer:
                     {
                         "type": "text",
                         "text": json.dumps(rep.to_dict(), indent=2)
+                    }
+                ]
+            }
+
+        elif tool_name == "payload_markov_profile":
+            from payload_entropy_studio.markov_lsh import (
+                analyze_markov_lsh_profile,
+                build_markov_transition_matrix,
+                calculate_ngram_frequencies,
+            )
+            payload = arguments["payload"]
+            order = int(arguments.get("ngram_order", 2))
+            report = analyze_markov_lsh_profile(payload)
+            ngrams = calculate_ngram_frequencies(payload, n=order)
+            res_data = report.to_dict()
+            res_data["ngrams"] = ngrams
+            return {
+                "content": [
+                    {
+                        "type": "text",
+                        "text": json.dumps(res_data, indent=2)
+                    }
+                ]
+            }
+
+        elif tool_name == "payload_lsh_fingerprint":
+            from payload_entropy_studio.markov_lsh import (
+                calculate_hamming_distance,
+                calculate_simhash_similarity,
+                compute_minhash,
+                compute_simhash,
+                estimate_jaccard_similarity,
+                simhash_hex,
+            )
+            payload = arguments["payload"]
+            sh = compute_simhash(payload)
+            minhash = compute_minhash(payload, num_perm=32)
+            out: Dict[str, Any] = {
+                "simhash": simhash_hex(sh),
+                "simhash_int": sh,
+                "minhash_signature": minhash,
+            }
+            if "compare_with" in arguments and arguments["compare_with"]:
+                other = arguments["compare_with"]
+                sh2 = compute_simhash(other)
+                minhash2 = compute_minhash(other, num_perm=32)
+                out["comparison"] = {
+                    "other_simhash": simhash_hex(sh2),
+                    "hamming_distance": calculate_hamming_distance(sh, sh2),
+                    "simhash_similarity": calculate_simhash_similarity(sh, sh2),
+                    "minhash_jaccard_similarity": estimate_jaccard_similarity(minhash, minhash2),
+                }
+            return {
+                "content": [
+                    {
+                        "type": "text",
+                        "text": json.dumps(out, indent=2)
+                    }
+                ]
+            }
+
+        elif tool_name == "payload_detect_shellcode":
+            from payload_entropy_studio.markov_lsh import detect_shellcode_heuristics
+            payload = arguments["payload"]
+            res = detect_shellcode_heuristics(payload)
+            return {
+                "content": [
+                    {
+                        "type": "text",
+                        "text": json.dumps(res, indent=2)
                     }
                 ]
             }

@@ -71,3 +71,39 @@ def test_ui_index_html(live_server):
         content = resp.read().decode("utf-8")
         assert "<!DOCTYPE html>" in content
         assert "Payload & Entropy Studio" in content
+
+
+def test_api_markov(live_server):
+    payload = json.dumps({"payload": "SELECT * FROM users WHERE id = 1"}).encode("utf-8")
+    req = urllib.request.Request(f"{live_server}/api/markov", data=payload, headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req) as resp:
+        assert resp.status == 200
+        data = json.loads(resp.read().decode("utf-8"))
+        assert "conditional_entropy" in data
+        assert "kl_divergence_natural" in data
+        assert "top_ngrams" in data
+
+
+def test_api_lsh(live_server):
+    payload = json.dumps({"payload": "<script>alert('XSS')</script>"}).encode("utf-8")
+    req = urllib.request.Request(f"{live_server}/api/lsh", data=payload, headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req) as resp:
+        assert resp.status == 200
+        data = json.loads(resp.read().decode("utf-8"))
+        assert "simhash_hex" in data
+        assert "simhash_int" in data
+        assert "minhash_signature" in data
+
+
+def test_api_shellcode(live_server):
+    # NOP sled + shellcode test
+    sc_hex = "909090909090909031c050682f2f7368682f62696e89e3505389e1b00bcd80"
+    payload = json.dumps({"payload": sc_hex, "is_hex": True}).encode("utf-8")
+    req = urllib.request.Request(f"{live_server}/api/shellcode", data=payload, headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req) as resp:
+        assert resp.status == 200
+        data = json.loads(resp.read().decode("utf-8"))
+        assert "is_shellcode_likely" in data
+        assert "nop_sled_detected" in data
+        assert data["nop_sled_detected"] is True
+

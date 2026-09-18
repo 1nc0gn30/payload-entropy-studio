@@ -15,6 +15,9 @@
 - 🛡️ **Multi-Vector Threat Analyzer**: Evaluates input strings for 10+ major attack vectors including SQL Injection, Cross-Site Scripting (XSS), Command Injection, Path Traversal (LFI), Server-Side Template Injection (SSTI), SSRF, XXE, and Prototype Pollution, with automated **CWE** and **MITRE ATT&CK** classification.
 - 🔓 **Recursive De-obfuscation Engine**: Unmasks multi-layered evasions across URL percent encoding (including double/triple encoding), Hex escapes, Unicode escapes, Base64 blocks, HTML entities, and string concatenations.
 - 📊 **Shannon Entropy & Kolmogorov Complexity Profiler**: Computes global and sliding-window byte entropy ($H(X)$ from 0.0 to 8.0 bits/byte) to instantly detect encrypted reverse shells, packed payloads, and shellcode.
+- 🔄 **Markov Transition Entropy & KL Divergence**: Evaluates first-order byte transition probability matrices, conditional transition entropy $H(X_t \mid X_{t-1})$, and Kullback-Leibler divergence $D_{KL}(P \parallel Q)$ against natural alphanumeric / HTTP baseline distributions.
+- 🎯 **SimHash & MinHash LSH Clustering**: 64-bit Locality-Sensitive Hashing (SimHash) with Hamming distance metrics and universal MinHash permutations for real-time near-duplicate payload clustering.
+- 🧬 **x86/x64 Shellcode Heuristics Engine**: Detects NOP sled slides (`\x90`, polymorphic slides), GetPC routines (`call $+5$; pop reg`, x87 FPU `fnstenv`), syscall / software interrupts (`0x0F 0x05`, `0xCD 0x80`), self-decrypting XOR loops, and non-printable byte density.
 - 🧱 **Automated WAF & IDS Rule Generator**: Automatically synthesizes production-ready defense rules in **ModSecurity 3 / OWASP CRS**, **Cloudflare WAF Expression**, **AWS WAF v2 JSON**, and **Suricata IDS**.
 - 🎨 **Payload Entropy Studio Web UI**: Real-time payload decoder, entropy spectrum visualizer, interactive attack sample library, and 1-click rule copy (design influenced by Material 3 tokens).
 - ⚡ **Zero Third-Party Runtime Dependencies**: 100% Python Standard Library runtime (`re`, `math`, `zlib`, `collections`, `urllib`, `html`, `base64`, `http.server`, `argparse`).
@@ -47,6 +50,15 @@ payload-entropy deobfuscate "%252e%252e%252f%252e%252e%252fetc%2fpasswd"
 
 # Profile Shannon entropy and byte distribution
 payload-entropy entropy "payload.bin" --window-size 32
+
+# Profile first-order Markov transition entropy & KL divergence
+payload-entropy markov "SELECT * FROM users WHERE id=1" --n 2
+
+# Compute 64-bit SimHash and MinHash LSH fingerprint
+payload-entropy lsh "<script>alert(1)</script>"
+
+# Scan raw binary or hex for x86/x64 shellcode patterns
+payload-entropy shellcode "909090909090909031c050682f2f7368682f62696e89e3505389e1b00bcd80" --hex
 
 # Synthesize WAF rules (ModSecurity, Cloudflare, AWS WAF, Suricata)
 payload-entropy waf "1' UNION SELECT 1,username,password FROM users--"
@@ -82,6 +94,9 @@ Add `payload-entropy-studio` to your Claude Desktop or Cursor configuration:
 - `payload_analyze`: Full multi-vector threat analysis, risk scoring, CWE & MITRE ATT&CK mapping.
 - `payload_deobfuscate`: Step-by-step recursive de-obfuscation history.
 - `payload_entropy`: Shannon entropy score, sliding window heatmap, and byte distribution.
+- `payload_markov_profile`: Markov transition entropy $H(X_t \mid X_{t-1})$ and KL divergence against natural baselines.
+- `payload_lsh_fingerprint`: 64-bit SimHash and MinHash locality-sensitive signatures for near-duplicate clustering.
+- `payload_detect_shellcode`: Deep heuristic inspection for x86/x64 shellcode, NOP sleds, GetPC, and syscalls.
 - `payload_waf_rules`: Synthesize ModSecurity, Cloudflare, AWS WAF, and Suricata rules.
 - `payload_diagnostics`: Platform and toolchain health check.
 

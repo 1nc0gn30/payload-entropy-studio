@@ -227,6 +227,62 @@ class PayloadHTTPHandler(BaseHTTPRequestHandler):
             self._send_json(rep.to_dict())
             return
 
+        elif path == "/api/markov":
+            from payload_entropy_studio.markov_lsh import (
+                analyze_markov_lsh_profile,
+                calculate_ngram_frequencies,
+            )
+            order = int(body.get("order", 2))
+            rep = analyze_markov_lsh_profile(payload)
+            out = rep.to_dict()
+            out["ngrams"] = calculate_ngram_frequencies(payload, n=order)
+            self._send_json(out)
+            return
+
+        elif path == "/api/lsh":
+            from payload_entropy_studio.markov_lsh import (
+                calculate_hamming_distance,
+                calculate_simhash_similarity,
+                compute_minhash,
+                compute_simhash,
+                estimate_jaccard_similarity,
+                simhash_hex,
+            )
+            sh1 = compute_simhash(payload)
+            mh1 = compute_minhash(payload, num_perm=32)
+            hex_val = simhash_hex(sh1)
+            res_d: Dict[str, Any] = {
+                "simhash": hex_val,
+                "simhash_hex": hex_val,
+                "simhash_int": sh1,
+                "minhash_signature": mh1,
+            }
+            compare_with = body.get("compare_with")
+            if compare_with:
+                sh2 = compute_simhash(compare_with)
+                mh2 = compute_minhash(compare_with, num_perm=32)
+                res_d["comparison"] = {
+                    "other_simhash": simhash_hex(sh2),
+                    "hamming_distance": calculate_hamming_distance(sh1, sh2),
+                    "simhash_similarity": calculate_simhash_similarity(sh1, sh2),
+                    "minhash_jaccard_similarity": estimate_jaccard_similarity(mh1, mh2),
+                }
+            self._send_json(res_d)
+            return
+
+        elif path == "/api/shellcode":
+            from payload_entropy_studio.markov_lsh import detect_shellcode_heuristics
+            is_hex = body.get("is_hex", False)
+            p_data = payload
+            if is_hex and isinstance(p_data, str):
+                try:
+                    p_data = bytes.fromhex(re.sub(r"\\[xX]|\s+", "", p_data))
+                except Exception:
+                    pass
+            sc_rep = detect_shellcode_heuristics(p_data)
+            self._send_json(sc_rep)
+            return
+
         self._send_json({"error": f"Endpoint not found: {path}"}, status=404)
 
     def log_message(self, format: str, *args: Any) -> None:

@@ -24,6 +24,22 @@ from payload_entropy_studio.entropy_engine import (
     calculate_shannon_entropy,
     estimate_monte_carlo_pi,
 )
+from payload_entropy_studio.markov_lsh import (
+    MarkovLSHReport,
+    analyze_markov_lsh_profile,
+    build_markov_transition_matrix,
+    calculate_hamming_distance,
+    calculate_kl_divergence,
+    calculate_ngram_frequencies,
+    calculate_simhash_similarity,
+    calculate_transition_entropy,
+    cluster_payloads,
+    compute_minhash,
+    compute_simhash,
+    detect_shellcode_heuristics,
+    estimate_jaccard_similarity,
+    simhash_hex,
+)
 from payload_entropy_studio.mcp_server import MCPServer, run_mcp_server
 from payload_entropy_studio.polyglot_analyzer import (
     PolyglotReport,
@@ -63,5 +79,19 @@ __all__ = [
     "detect_file_formats",
     "ASTObfuscationReport",
     "analyze_ast_obfuscation",
+    "MarkovLSHReport",
+    "analyze_markov_lsh_profile",
+    "build_markov_transition_matrix",
+    "calculate_transition_entropy",
+    "calculate_kl_divergence",
+    "calculate_ngram_frequencies",
+    "compute_simhash",
+    "simhash_hex",
+    "calculate_hamming_distance",
+    "calculate_simhash_similarity",
+    "compute_minhash",
+    "estimate_jaccard_similarity",
+    "cluster_payloads",
+    "detect_shellcode_heuristics",
 ]
 
