@@ -9,9 +9,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&family=Roboto:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --g-blue: #1a73e8;
-      --g-blue-dark: #1557b0;
-      --g-blue-light: #e8f0fe;
+      --g-blue: #B8860B;
+      --g-blue-dark: #8A6A09;
+      --g-blue-light: #FEF9E7;
       --g-green: #1e8e3e;
       --g-green-light: #e6f4ea;
       --g-yellow: #f9ab00;
@@ -323,6 +323,7 @@
       margin-bottom: 0.25rem;
     }
   </style>
+  <link rel="stylesheet" href="atelier.css">
 </head>
 <body>
   <header>
@@ -372,7 +373,7 @@
       <div style="font-size:0.75rem; display:flex; flex-direction:column; gap:0.4rem; color:var(--text-secondary);">
         <div style="display:flex; align-items:center; gap:0.4rem;"><span style="width:10px; height:10px; border-radius:2px; background:#d93025; display:inline-block;"></span> 6.8+ bits: Shellcode / Crypto</div>
         <div style="display:flex; align-items:center; gap:0.4rem;"><span style="width:10px; height:10px; border-radius:2px; background:#f9ab00; display:inline-block;"></span> 5.6 - 6.8: Obfuscated Data</div>
-        <div style="display:flex; align-items:center; gap:0.4rem;"><span style="width:10px; height:10px; border-radius:2px; background:#1a73e8; display:inline-block;"></span> 4.5 - 5.6: Code & Scripts</div>
+        <div style="display:flex; align-items:center; gap:0.4rem;"><span style="width:10px; height:10px; border-radius:2px; background:#B8860B; display:inline-block;"></span> 4.5 - 5.6: Code & Scripts</div>
         <div style="display:flex; align-items:center; gap:0.4rem;"><span style="width:10px; height:10px; border-radius:2px; background:#1e8e3e; display:inline-block;"></span> 1.0 - 4.5: Normal Text</div>
       </div>
     </aside>
@@ -599,7 +600,7 @@
       const thresholds = [
         { val: 6.8, color: '#d93025', label: '6.8 Shellcode' },
         { val: 5.6, color: '#f9ab00', label: '5.6 Obfuscated' },
-        { val: 4.5, color: '#1a73e8', label: '4.5 Code' },
+        { val: 4.5, color: '#B8860B', label: '4.5 Code' },
       ];
 
       thresholds.forEach(t => {
@@ -643,7 +644,7 @@
 
       // Gradient stroke
       ctx.lineWidth = 2.5;
-      ctx.strokeStyle = globalEntropy >= 5.6 ? '#f9ab00' : '#1a73e8';
+      ctx.strokeStyle = globalEntropy >= 5.6 ? '#f9ab00' : '#B8860B';
       ctx.stroke();
 
       // Area fill
@@ -658,7 +659,7 @@
         const y = h - (pt.entropy / 8.0) * (h - 20) - 10;
         ctx.beginPath();
         ctx.arc(x, y, pt.is_spike ? 4 : 2, 0, Math.PI * 2);
-        ctx.fillStyle = pt.is_spike ? '#d93025' : '#1a73e8';
+        ctx.fillStyle = pt.is_spike ? '#d93025' : '#B8860B';
         ctx.fill();
       });
     }
@@ -684,7 +685,7 @@
         const y = h - 15 - barHeight;
 
         // Color coding by byte class
-        let color = '#1a73e8'; // Printable
+        let color = '#B8860B'; // Printable
         if (i < 32 && i !== 9 && i !== 10 && i !== 13) color = '#d93025'; // Control
         else if (i >= 128) color = '#9334e6'; // High-bit extended
 
