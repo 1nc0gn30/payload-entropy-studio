@@ -148,15 +148,30 @@ class PayloadHTTPHandler(BaseHTTPRequestHandler):
             })
             return
 
-        # Serve UI from public/index.html
+        # Serve UI & Static Assets from public/
         public_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "public"))
-        index_file = os.path.join(public_dir, "index.html")
+        rel_path = path.lstrip("/")
+        if not rel_path or rel_path in ("index.html", "studio"):
+            rel_path = "index.html"
+        target_file = os.path.abspath(os.path.join(public_dir, rel_path))
 
-        if os.path.isfile(index_file) and path in ("/", "/index.html"):
-            with open(index_file, "rb") as f:
+        if target_file.startswith(public_dir) and os.path.isfile(target_file):
+            content_type = "text/html; charset=utf-8"
+            if rel_path.endswith(".css"):
+                content_type = "text/css; charset=utf-8"
+            elif rel_path.endswith(".js"):
+                content_type = "application/javascript; charset=utf-8"
+            elif rel_path.endswith(".png"):
+                content_type = "image/png"
+            elif rel_path.endswith(".svg"):
+                content_type = "image/svg+xml"
+            elif rel_path.endswith(".json"):
+                content_type = "application/json"
+
+            with open(target_file, "rb") as f:
                 content = f.read()
             self.send_response(200)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Type", content_type)
             self.send_header("Content-Length", str(len(content)))
             self._set_cors_headers()
             self.end_headers()

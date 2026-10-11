@@ -388,3 +388,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         return 0
 
     return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+
