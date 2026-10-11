@@ -13,14 +13,21 @@
   <meta property="og:description" content="In-browser Shannon entropy analyzer, byte spectrum histogram, and automated WAF rule synthesizer. Zero cloud egress.">
   <meta property="og:url" content="https://entropystudio.nullai.tech">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="https://entropystudio.nullai.tech/assets/banner.jpg">
+  <meta property="og:image" content="https://entropystudio.nullai.tech/assets/banner.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Payload & Entropy Studio banner">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@1nc0gn30">
   <meta name="twitter:creator" content="@1nc0gn30">
-  <meta name="twitter:image" content="https://entropystudio.nullai.tech/assets/banner.jpg">
+  <meta name="twitter:title" content="Payload & Entropy Studio | Sovereign Threat Intelligence">
+  <meta name="twitter:description" content="In-browser Shannon entropy analyzer, byte spectrum histogram, and automated WAF rule synthesizer. Zero cloud egress.">
+  <meta name="twitter:image" content="https://entropystudio.nullai.tech/assets/banner.png">
+  <meta name="twitter:image:alt" content="Payload & Entropy Studio banner">
   <link rel="canonical" href="https://entropystudio.nullai.tech">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="icon" type="image/png" href="/assets/icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon.png">
+  <link rel="apple-touch-icon" href="/assets/icon.png">
   <script src="https://integrate.depay.com/widgets/v13.js" defer></script>
 
   <!-- AEO & SEO Schema.org Graph -->
@@ -529,16 +536,16 @@
 <body>
 
   <header>
-    <div class="brand-wrap">
-      <div class="brand-logo" alt="Payload Entropy Studio Shield">📊</div>
+    <div class="brand-wrap" style="display:flex; align-items:center; gap:0.75rem;">
+      <img src="/assets/icon.png" alt="Payload Entropy Studio Shield" class="brand-icon" style="width:36px;height:36px;border-radius:8px;object-fit:cover;box-shadow:0 0 10px rgba(255,215,0,0.3);">
       <div class="brand-text">
-        <h1>Payload & Entropy Studio</h1>
-        <p>Shannon Waveform Analyzer & WAF Synthesizer</p>
+        <h1 style="display:flex; align-items:center; gap:8px;">Payload &amp; Entropy Studio</h1>
+        <p>Shannon Waveform Analyzer &amp; WAF Synthesizer</p>
       </div>
     </div>
     <div class="header-badges" style="display:flex; align-items:center; gap:0.5rem;">
       <span class="badge badge-egress">ZERO CLOUD EGRESS</span>
-      <span class="badge badge-pro" id="headerProBadge" onclick="openLicenseModal()" style="cursor:pointer;">FREE TIER</span>
+      <span class="badge badge-pro" id="licenseBadge" onclick="openLicenseModal()" style="cursor:pointer; font-weight:700;">⚡ FREE TIER</span>
       <button class="btn-activate" id="activateKeyBtn" onclick="openLicenseModal()" style="padding:4px 10px; font-size:11px; cursor:pointer;">🔑 UNLOCK PRO</button>
     </div>
   </header>
@@ -742,8 +749,8 @@
       <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:1rem;">
         <div style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.4rem;">Have a receipt email or license key?</div>
         <div style="display:flex; gap:0.5rem;">
-          <input type="text" id="licenseInput" class="text-input" style="background:#090a0f; border:1px solid rgba(255,255,255,0.15); border-radius:6px; color:#fff; padding:6px 10px; width:100%;" placeholder="e.g. user@domain.com or ENTROPY-PRO-XXXX">
-          <button class="btn-sm primary" onclick="activateLicenseKey()">Activate</button>
+          <input type="text" id="licenseInput" class="text-input" style="background:#090a0f; border:1px solid rgba(255,255,255,0.15); border-radius:6px; color:#fff; padding:6px 10px; width:100%;" placeholder="e.g. user@domain.com or ENTROPY-PRO-2026">
+          <button id="btnActivateKey" class="btn-sm primary" onclick="activateLicenseKey(document.getElementById('licenseInput').value)">Activate</button>
         </div>
       </div>
     </div>
@@ -768,16 +775,22 @@
     let isProLicensed = false;
     let currentWafPlatform = 'modsec';
 
+    function isProUser() {
+      return localStorage.getItem('entropy_studio_licensed') === 'true' ||
+             localStorage.getItem('payload-entropy-studio_pro_licensed') === 'true';
+    }
+
     function checkLicense() {
       const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('licensed') === 'true' || urlParams.get('pro') === '1') {
+      if (urlParams.get('licensed') === 'true' || urlParams.get('pro') === '1' || urlParams.get('pro') === 'true') {
         localStorage.setItem('entropy_studio_licensed', 'true');
+        localStorage.setItem('payload-entropy-studio_pro_licensed', 'true');
       }
-      isProLicensed = localStorage.getItem('entropy_studio_licensed') === 'true';
+      isProLicensed = isProUser();
 
       const wrap = document.getElementById('wafPaywallWrap');
       const content = document.getElementById('wafPaywallContent');
-      const badge = document.getElementById('headerProBadge');
+      const badge = document.getElementById('licenseBadge') || document.getElementById('headerProBadge');
       const banner = document.getElementById('salesBanner');
       const activateBtn = document.getElementById('activateKeyBtn');
 
@@ -796,10 +809,10 @@
         if (wrap) wrap.classList.add('is-locked');
         if (content) content.classList.add('locked');
         if (badge) {
-          badge.textContent = 'FREE TIER';
-          badge.style.color = '';
-          badge.style.borderColor = '';
-          badge.style.background = '';
+          badge.textContent = '⚡ FREE TIER';
+          badge.style.color = '#ef4444';
+          badge.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+          badge.style.background = 'rgba(239, 68, 68, 0.1)';
         }
         if (banner) banner.style.display = 'flex';
         if (activateBtn) activateBtn.style.display = 'inline-block';
@@ -814,15 +827,21 @@
       document.getElementById('licenseModal').classList.remove('open');
     }
 
-    function activateLicenseKey() {
-      const val = document.getElementById('licenseInput').value.trim();
-      if (val.length > 3 || val.toUpperCase() === 'ENTROPY-PRO-2026' || val.includes('@')) {
+    function activateLicenseKey(providedKey) {
+      let val = providedKey;
+      if (!val) {
+        const input = document.getElementById('licenseInput');
+        val = input ? input.value.trim() : '';
+      }
+      if (val && (val.length > 3 || val.toUpperCase() === 'ENTROPY-PRO-2026' || val.includes('@'))) {
         localStorage.setItem('entropy_studio_licensed', 'true');
+        localStorage.setItem('payload-entropy-studio_pro_licensed', 'true');
         checkLicense();
         closeLicenseModal();
-        alert('⭐ Payload & Entropy Studio Pro activated! All WAF synthesizers unlocked.');
       } else {
-        alert('Please enter a valid receipt email or license key.');
+        if (!providedKey && typeof alert === 'function') {
+          try { alert('Please enter a valid receipt email or license key.'); } catch(e) {}
+        }
       }
     }
 
@@ -1197,7 +1216,7 @@ alert tcp any any -> $HTTP_SERVERS $HTTP_PORTS (
       const text = document.getElementById('payloadInput').value;
       const blob = new Blob([JSON.stringify({
         tool: "payload-entropy-studio",
-        version: "2.4.0",
+        version: "2.5.0",
         timestamp: new Date().toISOString(),
         entropy_shannon: document.getElementById('valShannon').textContent,
         kolmogorov: document.getElementById('valKolmogorov').textContent,
