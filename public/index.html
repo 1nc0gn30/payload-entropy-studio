@@ -459,11 +459,45 @@
       padding: 1.5rem;
       text-align: center;
     }
-    .paywall-wrap:not(.is-locked) .paywall-overlay { display: none; }
-    .paywall-wrap:not(.is-locked) .paywall-content.locked {
-      filter: none;
+    .paywall-wrap:not(.is-locked):not(.locked) .paywall-overlay {
+      display: none !important;
+    }
+    .paywall-wrap:not(.is-locked):not(.locked) .paywall-content.locked,
+    .paywall-wrap:not(.is-locked):not(.locked) .paywall-content {
+      filter: none !important;
+      pointer-events: auto !important;
+      user-select: auto !important;
+      opacity: 1 !important;
+    }
+
+    /* Glassmorphic Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .toast-msg {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      color: #ffd700;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(12px);
+      transform: translateY(10px);
+      opacity: 0;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       pointer-events: auto;
-      user-select: auto;
+    }
+    .toast-msg.show {
+      transform: translateY(0);
       opacity: 1;
     }
     .lock-box {
@@ -551,7 +585,7 @@
   </header>
 
   <!-- Sales Banner -->
-  <div class="sales-banner" id="salesBanner">
+  <div class="sales-banner" id="salesBanner" data-alias="salesBannerWrap">
     <div>
       <span class="sales-badge-pill">FOUNDING MEMBER DEAL</span>
       <strong style="color:#fff;">Sovereign Security License — $19 Lifetime (<del>$79 Regular</del>)</strong>
@@ -560,13 +594,13 @@
       </div>
     </div>
     <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-      <a href="https://buy.stripe.com/7sI7sA8hM2X8eFG8ww" class="btn-checkout" target="_blank" rel="noopener">
+      <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" class="btn-checkout" target="_blank" rel="noopener">
         💳 Instant Stripe Checkout ($19)
       </a>
       <button class="btn-solana" onclick="openDePayCheckout(event)">
         🪙 Pay with Solana
       </button>
-      <button class="btn-activate" onclick="openLicenseModal()">
+      <button class="btn-activate" id="btn-paywall-key" onclick="openLicenseModal()">
         🔑 Activate Key
       </button>
     </div>
@@ -678,8 +712,8 @@
     </div>
 
     <!-- Frosted Glass Output Paywall Section (WAF Generator) -->
-    <div class="paywall-wrap is-locked" id="wafPaywallWrap">
-      <div class="paywall-overlay">
+    <div class="paywall-wrap is-locked" id="wafPaywallWrap" data-alias="codePaywallWrap">
+      <div class="paywall-overlay" id="outputPaywallOverlay" data-alias="paywallOverlay">
         <div class="lock-box">
           <div style="font-size:1.1rem; font-weight:800; color:var(--gold); margin-bottom:0.4rem;">
             🔒 PRO WAF RULE GENERATOR & MITIGATION SUITE
@@ -688,7 +722,7 @@
             Automated ModSecurity CRS, Cloudflare WAF, AWS WAF v2 JSON, and Snort signature export manifests are locked for free users.
           </div>
           <div style="display:flex; justify-content:center; gap:0.6rem; flex-wrap:wrap;">
-            <a href="https://buy.stripe.com/7sI7sA8hM2X8eFG8ww" class="btn-checkout" target="_blank" rel="noopener">
+            <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" class="btn-checkout" target="_blank" rel="noopener">
               💳 Unlock Pro Lifetime ($19)
             </a>
             <button class="btn-solana" onclick="openDePayCheckout(event)">
@@ -720,7 +754,7 @@
   </main>
 
   <!-- Pro Modal -->
-  <div class="modal-backdrop" id="licenseModal">
+  <div class="modal-backdrop" id="licenseModal" data-alias="paywall-modal">
     <div class="modal-card">
       <button class="modal-close" onclick="closeLicenseModal()">×</button>
       <div style="font-size:1.2rem; font-weight:800; color:#fff; margin-bottom:0.4rem;">⭐ Upgrade to Payload & Entropy Studio Pro</div>
@@ -738,7 +772,7 @@
       </ul>
 
       <div style="display:flex; gap:0.6rem; flex-wrap:wrap; margin-bottom:1.2rem;">
-        <a href="https://buy.stripe.com/7sI7sA8hM2X8eFG8ww" class="btn-checkout" target="_blank" rel="noopener" style="flex:1; justify-content:center;">
+        <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" class="btn-checkout" target="_blank" rel="noopener" style="flex:1; justify-content:center;">
           💳 Buy with Stripe ($19)
         </a>
         <button class="btn-solana" onclick="openDePayCheckout(event)" style="flex:1; justify-content:center;">
@@ -749,12 +783,16 @@
       <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:1rem;">
         <div style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.4rem;">Have a receipt email or license key?</div>
         <div style="display:flex; gap:0.5rem;">
-          <input type="text" id="licenseInput" class="text-input" style="background:#090a0f; border:1px solid rgba(255,255,255,0.15); border-radius:6px; color:#fff; padding:6px 10px; width:100%;" placeholder="e.g. user@domain.com or ENTROPY-PRO-2026">
+          <input type="text" id="licenseInput" data-alias="licenseKeyInput" class="text-input" style="background:#090a0f; border:1px solid rgba(255,255,255,0.15); border-radius:6px; color:#fff; padding:6px 10px; width:100%;" placeholder="e.g. user@domain.com or ENTROPY-PRO-2026">
+          <input type="hidden" id="license-input" data-alias="license-input">
           <button id="btnActivateKey" class="btn-sm primary" onclick="activateLicenseKey(document.getElementById('licenseInput').value)">Activate</button>
         </div>
       </div>
     </div>
   </div>
+
+  <div id="toastMessage" class="toast-container" data-alias="toast"></div>
+  <div id="toast" style="display:none;" aria-hidden="true"></div>
 
   <footer class="zoth-footer">
     <div><strong>Payload & Entropy Studio</strong> — Sovereign Security Intelligence & Threat Analysis.</div>
@@ -780,23 +818,45 @@
              localStorage.getItem('payload-entropy-studio_pro_licensed') === 'true';
     }
 
+    // --- Glassmorphic Toast & Non-Blocking Notification ---
+    function showToast(msg) {
+      let container = document.getElementById('toastMessage');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastMessage';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+      }
+      const el = document.createElement('div');
+      el.className = 'toast-msg';
+      el.textContent = msg;
+      container.appendChild(el);
+      requestAnimationFrame(() => el.classList.add('show'));
+      setTimeout(() => {
+        el.classList.remove('show');
+        setTimeout(() => el.remove(), 300);
+      }, 3000);
+    }
+    window.alert = showToast;
+
     function checkLicense() {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('licensed') === 'true' || urlParams.get('pro') === '1' || urlParams.get('pro') === 'true') {
         localStorage.setItem('entropy_studio_licensed', 'true');
         localStorage.setItem('payload-entropy-studio_pro_licensed', 'true');
+        history.replaceState(null, '', window.location.pathname);
       }
       isProLicensed = isProUser();
 
-      const wrap = document.getElementById('wafPaywallWrap');
+      const wrap = document.getElementById('wafPaywallWrap') || document.getElementById('codePaywallWrap');
       const content = document.getElementById('wafPaywallContent');
       const badge = document.getElementById('licenseBadge') || document.getElementById('headerProBadge');
-      const banner = document.getElementById('salesBanner');
+      const banner = document.getElementById('salesBanner') || document.getElementById('salesBannerWrap');
       const activateBtn = document.getElementById('activateKeyBtn');
 
       if (isProLicensed) {
-        if (wrap) wrap.classList.remove('is-locked');
-        if (content) content.classList.remove('locked');
+        if (wrap) wrap.classList.remove('is-locked', 'locked');
+        if (content) content.classList.remove('locked', 'is-locked');
         if (badge) {
           badge.textContent = '⭐ PRO ACTIVE';
           badge.style.color = '#ffd700';
@@ -830,18 +890,17 @@
     function activateLicenseKey(providedKey) {
       let val = providedKey;
       if (!val) {
-        const input = document.getElementById('licenseInput');
+        const input = document.getElementById('licenseInput') || document.getElementById('license-input');
         val = input ? input.value.trim() : '';
       }
-      if (val && (val.length > 3 || val.toUpperCase() === 'ENTROPY-PRO-2026' || val.includes('@'))) {
+      if (val && (val.length > 3 || val.toUpperCase() === 'ENTROPY-PRO-2026' || val.toUpperCase() === 'PAYLOAD-PRO-2026' || val.toUpperCase() === 'SOVEREIGN-PRO-2026' || val.includes('@'))) {
         localStorage.setItem('entropy_studio_licensed', 'true');
         localStorage.setItem('payload-entropy-studio_pro_licensed', 'true');
         checkLicense();
         closeLicenseModal();
+        showToast('⭐ Payload & Entropy Studio Pro Activated! All WAF tools unlocked.');
       } else {
-        if (!providedKey && typeof alert === 'function') {
-          try { alert('Please enter a valid receipt email or license key.'); } catch(e) {}
-        }
+        showToast('Please enter a valid receipt email or license key.');
       }
     }
 
@@ -1204,7 +1263,7 @@ alert tcp any any -> $HTTP_SERVERS $HTTP_PORTS (
       }
       const code = document.getElementById('wafCodeViewer').textContent;
       navigator.clipboard.writeText(code).then(() => {
-        alert('Copied WAF rule to clipboard!');
+        showToast('Copied WAF rule to clipboard!');
       });
     }
 
