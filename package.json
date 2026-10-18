@@ -1,6 +1,6 @@
 {
   "name": "payload-entropy-studio",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "description": "Zero-Trust Shannon & Chi-Square Payload Entropy Analyzer, Threat Classifier & Deobfuscator — Desktop Workstation",
   "main": "electron/main.cjs",
   "bin": {
@@ -8,7 +8,9 @@
     "payload-entropy-studio": "./bin/payload-entropy.js"
   },
   "scripts": {
-    "start": "python3 -m payload_entropy_studio.cli serve --port 8095",
+    "start": "python3 -m payload_entropy_studio.cli serve --port 8125",
+    "serve": "python3 -m http.server 8125 --directory public",
+    "test:ui": "python3 scripts/verify_ui.py",
     "electron": "electron .",
     "app": "electron .",
     "test": "pytest tests/"

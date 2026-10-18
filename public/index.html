@@ -571,7 +571,7 @@
 
   <header>
     <div class="brand-wrap" style="display:flex; align-items:center; gap:0.75rem;">
-      <img src="/assets/icon.png" alt="Payload Entropy Studio Shield" class="brand-icon" style="width:36px;height:36px;border-radius:8px;object-fit:cover;box-shadow:0 0 10px rgba(255,215,0,0.3);">
+      <img src="assets/icon.png" alt="Payload Entropy Studio Shield" class="brand-icon" style="width:36px;height:36px;border-radius:8px;object-fit:cover;box-shadow:0 0 10px rgba(255,215,0,0.3);">
       <div class="brand-text">
         <h1 style="display:flex; align-items:center; gap:8px;">Payload &amp; Entropy Studio</h1>
         <p>Shannon Waveform Analyzer &amp; WAF Synthesizer</p>
@@ -580,7 +580,7 @@
     <div class="header-badges" style="display:flex; align-items:center; gap:0.5rem;">
       <span class="badge badge-egress">ZERO CLOUD EGRESS</span>
       <span class="badge badge-pro" id="licenseBadge" onclick="openLicenseModal()" style="cursor:pointer; font-weight:700;">⚡ FREE TIER</span>
-      <button class="btn-activate" id="activateKeyBtn" onclick="openLicenseModal()" style="padding:4px 10px; font-size:11px; cursor:pointer;">🔑 UNLOCK PRO</button>
+      <button class="btn-activate" id="activateKeyBtn" onclick="openLicenseModal()" style="padding:4px 10px; font-size:11px; cursor:pointer;">✦ UNLOCK PRO</button>
     </div>
   </header>
 
@@ -595,13 +595,13 @@
     </div>
     <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
       <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" class="btn-checkout" target="_blank" rel="noopener">
-        💳 Instant Stripe Checkout ($19)
+        ★ Instant Stripe Checkout ($19)
       </a>
       <button class="btn-solana" onclick="openDePayCheckout(event)">
-        🪙 Pay with Solana
+        ◉ Pay with Solana
       </button>
       <button class="btn-activate" id="btn-paywall-key" onclick="openLicenseModal()">
-        🔑 Activate Key
+        ✦ Activate Key
       </button>
     </div>
   </div>
@@ -622,14 +622,14 @@
       </div>
       <div style="display:flex; align-items:center; gap:0.5rem;">
         <button class="btn-sm primary" onclick="runAnalysis()">⚡ Compute Waveform & Signatures</button>
-        <button class="btn-sm" onclick="exportThreatBundle()">📥 Export Threat Dossier</button>
+        <button class="btn-sm" onclick="exportThreatBundle()">↓ Export Threat Dossier</button>
       </div>
     </div>
 
     <!-- Payload Input Area -->
     <div class="card" style="margin-bottom:1.2rem;">
       <div class="card-header">
-        <span class="card-title">🔍 Inspectable Payload Buffer</span>
+        <span class="card-title">⌕ Inspectable Payload Buffer</span>
         <span style="font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:var(--text-secondary);" id="payloadSizeBadge">0 bytes</span>
       </div>
       <textarea id="payloadInput" class="code-box" placeholder="Paste suspicious string, hex shellcode, or web payload here..."></textarea>
@@ -646,7 +646,7 @@
         <!-- Metrics Card -->
         <div class="card">
           <div class="card-header">
-            <span class="card-title">📈 Shannon Entropy & Information Density</span>
+            <span class="card-title">✦ Shannon Entropy & Information Density</span>
             <span class="badge badge-egress" id="classificationBadge">CODE</span>
           </div>
           <div class="metrics-grid">
@@ -672,7 +672,7 @@
         <!-- Sliding Window Waveform Canvas -->
         <div class="card">
           <div class="card-header">
-            <span class="card-title">🌊 32-Byte Sliding Window Entropy Profile</span>
+            <span class="card-title">✦ 32-Byte Sliding Window Entropy Profile</span>
             <span style="font-size:0.72rem; color:var(--text-secondary); font-family:'JetBrains Mono',monospace;">Threshold: 6.8 b/B</span>
           </div>
           <canvas id="slidingCanvas" class="waveform-canvas" width="600" height="140"></canvas>
@@ -681,7 +681,7 @@
         <!-- Byte Spectrum Histogram Canvas -->
         <div class="card">
           <div class="card-header">
-            <span class="card-title">📊 256-Byte Spectrum Frequency Distribution</span>
+            <span class="card-title">◈ 256-Byte Spectrum Frequency Distribution</span>
           </div>
           <canvas id="spectrumCanvas" class="waveform-canvas" width="600" height="140"></canvas>
         </div>
@@ -693,7 +693,7 @@
         <!-- Deobfuscation Layers -->
         <div class="card">
           <div class="card-header">
-            <span class="card-title">🧪 Layer-by-Layer Deobfuscation Pipeline</span>
+            <span class="card-title">✦ Layer-by-Layer Deobfuscation Pipeline</span>
             <span class="badge" id="layersCountBadge" style="background:rgba(30,144,255,0.15); color:var(--accent-blue);">0 Layers</span>
           </div>
           <div id="deobfContainer" style="display:flex; flex-direction:column; gap:0.5rem; max-height:200px; overflow-y:auto;"></div>
@@ -702,7 +702,7 @@
         <!-- Matched Signatures & CWEs -->
         <div class="card">
           <div class="card-header">
-            <span class="card-title">🎯 Matched Attack Signatures & CWEs</span>
+            <span class="card-title">◎ Matched Attack Signatures & CWEs</span>
             <span class="badge" id="matchesCountBadge" style="background:rgba(255,71,87,0.15); color:var(--accent-red);">0 Matches</span>
           </div>
           <div id="signaturesContainer" style="display:flex; flex-direction:column; gap:0.5rem; max-height:220px; overflow-y:auto;"></div>
@@ -716,20 +716,20 @@
       <div class="paywall-overlay" id="outputPaywallOverlay" data-alias="paywallOverlay">
         <div class="lock-box">
           <div style="font-size:1.1rem; font-weight:800; color:var(--gold); margin-bottom:0.4rem;">
-            🔒 PRO WAF RULE GENERATOR & MITIGATION SUITE
+            ★ PRO WAF RULE GENERATOR & MITIGATION SUITE
           </div>
           <div style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem; line-height:1.4;">
             Automated ModSecurity CRS, Cloudflare WAF, AWS WAF v2 JSON, and Snort signature export manifests are locked for free users.
           </div>
           <div style="display:flex; justify-content:center; gap:0.6rem; flex-wrap:wrap;">
             <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" class="btn-checkout" target="_blank" rel="noopener">
-              💳 Unlock Pro Lifetime ($19)
+              ★ Unlock Pro Lifetime ($19)
             </a>
             <button class="btn-solana" onclick="openDePayCheckout(event)">
-              🪙 Pay with Solana
+              ◉ Pay with Solana
             </button>
             <button class="btn-activate" onclick="openLicenseModal()">
-              🔑 Enter Key
+              ✦ Enter Key
             </button>
           </div>
         </div>
@@ -737,13 +737,13 @@
       <div class="paywall-content locked" id="wafPaywallContent">
         <div class="card" style="margin-top:0.5rem;">
           <div class="card-header">
-            <span class="card-title">🛡️ Automated Multi-Engine WAF Synthesizer</span>
+            <span class="card-title">❖ Automated Multi-Engine WAF Synthesizer</span>
             <div style="display:flex; gap:0.4rem;">
               <button class="btn-sm" onclick="switchWafPlatform('modsec')">ModSecurity</button>
               <button class="btn-sm" onclick="switchWafPlatform('cloudflare')">Cloudflare</button>
               <button class="btn-sm" onclick="switchWafPlatform('awswaf')">AWS WAF v2</button>
               <button class="btn-sm" onclick="switchWafPlatform('snort')">Snort</button>
-              <button class="btn-sm primary" onclick="copyWafRule()">📋 Copy Rule</button>
+              <button class="btn-sm primary" onclick="copyWafRule()">✦ Copy Rule</button>
             </div>
           </div>
           <pre class="code-block" id="wafCodeViewer" style="max-height:220px;">// WAF Rule will synthesize here</pre>
@@ -773,10 +773,10 @@
 
       <div style="display:flex; gap:0.6rem; flex-wrap:wrap; margin-bottom:1.2rem;">
         <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" class="btn-checkout" target="_blank" rel="noopener" style="flex:1; justify-content:center;">
-          💳 Buy with Stripe ($19)
+          ★ Buy with Stripe ($19)
         </a>
         <button class="btn-solana" onclick="openDePayCheckout(event)" style="flex:1; justify-content:center;">
-          🪙 Pay with Solana
+          ◉ Pay with Solana
         </button>
       </div>
 
@@ -1105,7 +1105,7 @@
         bannerBox.innerHTML = `
           <div class="threat-banner CRITICAL">
             <div>
-              <strong>🚨 High-Entropy Malicious Threat Detected</strong>
+              <strong>✦ High-Entropy Malicious Threat Detected</strong>
               <div style="font-size:0.8rem; margin-top:2px;">Entropy: ${globalEntropy.toFixed(2)} b/B &bull; Matched Rules: ${matched.length}</div>
             </div>
             <span style="font-size:1.1rem; font-weight:800; font-family:'JetBrains Mono',monospace;">RISK: 98%</span>
