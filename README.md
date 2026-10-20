@@ -2,6 +2,7 @@
 
 [![Live App](https://img.shields.io/badge/Live_App-entropystudio.nullai.tech-gold?style=flat-square)](https://entropystudio.nullai.tech)
 [![Dual Rails](https://img.shields.io/badge/Dual_Checkout-Stripe_%2B_Solana-success?style=flat-square)](https://entropystudio.nullai.tech)
+[![Zoth Studio Ready](https://img.shields.io/badge/Zoth%20Studio-God%20Mode%20Active-D4AF37?style=flat)](https://zoth.nullai.tech/tools/payload-entropy-studio)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0%20runtime-success.svg)](https://github.com/1nc0gn30/payload-entropy-studio)
 [![MCP Server](https://img.shields.io/badge/MCP-FastMCP%202024--11--05-blueviolet.svg)](https://modelcontextprotocol.io/)
@@ -9,14 +10,16 @@
 
 > **100% In-Browser Shannon Entropy Waveform Visualizer, Obfuscated Payload Deobfuscator & Multi-Engine WAF Synthesizer with Zero Cloud Egress.**
 
-Live Web Application: [**https://entropystudio.nullai.tech**](https://entropystudio.nullai.tech)
+- 🌐 Live Web Application: [**https://entropystudio.nullai.tech**](https://entropystudio.nullai.tech)
+- 💻 Zoth Studio Enclave: [**https://zoth.nullai.tech/tools/payload-entropy-studio**](https://zoth.nullai.tech/tools/payload-entropy-studio)
+- ⚡ Attribution: Engineered by Neal Frazier Tech ([@1nc0gn30](https://github.com/1nc0gn30)) • NullAI Platform.
 
 ---
 
 ## 💎 Founding Member Access ($19 Lifetime)
 
 - **One-Time Sovereign License**: **$19 Lifetime** (<del>$79 Regular</del>)
-- **Credit Card / Apple Pay / Google Pay**: [Stripe Instant Checkout](https://buy.stripe.com/7sI7sA8hM2X8eFG8ww)
+- **Credit Card / Apple Pay / Google Pay**: [Stripe Instant Checkout ($19 USD)](https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L)
 - **Solana Web3 Rails**: Receiver `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`
 - **Instant Activation**: Click *"Activate Key"* on the web app or load with `?licensed=true`.
 
