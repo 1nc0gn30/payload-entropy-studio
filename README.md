@@ -1,3 +1,9 @@
+<div align="center">
+  <img src="assets/hero-banner.svg" alt="Payload Entropy Studio — Sovereign Architecture Banner" width="100%" />
+</div>
+
+<br />
+
 # 🛡️ Payload & Entropy Studio
 
 [![Live App](https://img.shields.io/badge/Live_App-entropystudio.nullai.tech-gold?style=flat-square)](https://entropystudio.nullai.tech)
