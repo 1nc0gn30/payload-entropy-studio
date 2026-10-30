@@ -159,10 +159,12 @@ class PayloadHTTPHandler(BaseHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
 
-        if path == "/api/health":
+        if path in ("/health", "/api/health"):
             self._send_json({
-                "status": "ok",
+                "status": "healthy",
                 "service": "payload-entropy-studio",
+                "version": "2.5.0",
+                "sovereign": True,
                 "uptime_seconds": round(time.time() - SERVER_START_TIME, 2),
                 "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
             })
