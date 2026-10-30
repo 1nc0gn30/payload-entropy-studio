@@ -1,0 +1,166 @@
+/**
+ * wave.css — Payload & Entropy Studio
+ * Anchor Concept: Precision Signal Analyzer
+ * Refines typography hierarchy, provides high-visibility focus states,
+ * and adds an expo-out transform/opacity entrance for result updates.
+ */
+
+/* ==========================================================================
+   1. Typography & Hierarchy Refinements
+   ========================================================================== */
+
+.card-title {
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+
+.metric-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 64px;
+}
+
+.metric-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-feature-settings: "tnum" 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--gold);
+}
+
+.metric-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+textarea.code-box {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  font-feature-settings: "tnum" 1, "zero" 1;
+  letter-spacing: -0.01em;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+pre.code-block {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  font-feature-settings: "tnum" 1;
+}
+
+select.sample-picker {
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.threat-banner strong {
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+}
+
+/* ==========================================================================
+   2. High-Visibility Accessible Focus States
+   ========================================================================== */
+
+/* Remove ambiguous focus outlines when using mouse pointers */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* High-contrast keyboard focus rings on interactive working tool elements */
+textarea.code-box:focus-visible,
+select.sample-picker:focus-visible,
+.btn-sm:focus-visible,
+.btn-activate:focus-visible,
+.btn-checkout:focus-visible,
+.btn-solana:focus-visible,
+.modal-close:focus-visible,
+input.text-input:focus-visible,
+.badge-pro:focus-visible {
+  outline: 2px solid var(--gold) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.25) !important;
+}
+
+/* Micro-interaction feedback on tool action buttons */
+.btn-sm {
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.12s ease;
+}
+
+.btn-sm:hover {
+  transform: translateY(-1px);
+}
+
+.btn-sm:active {
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   3. Result Arrival Motion (Transform & Opacity)
+   Tokens: EASE_OUT_EXPO [0.16, 1, 0.3, 1], Duration 220ms, Distance 8px
+   ========================================================================== */
+
+@keyframes waveResultReveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.threat-banner {
+  animation: waveResultReveal 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+#deobfContainer > div {
+  animation: waveResultReveal 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+#signaturesContainer > div {
+  animation: waveResultReveal 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ==========================================================================
+   4. Motion Safety & Reduced Motion Support
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .threat-banner,
+  #deobfContainer > div,
+  #signaturesContainer > div {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .btn-sm,
+  textarea.code-box,
+  select.sample-picker {
+    transition: none !important;
+    transform: none !important;
+  }
+}

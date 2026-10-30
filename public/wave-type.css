@@ -1,0 +1,145 @@
+/**
+ * wave-type.css — Payload & Entropy Studio
+ * Typography refinements: readable measures on the main work surface,
+ * tabular numbers on scores and prices, and clearer heading tracking.
+ * Strictly uses selectors that already exist in public/index.html.
+ */
+
+/* ==========================================================================
+   1. Heading Tracking & Legibility Refinements
+   ========================================================================== */
+
+/* Main brand headline: slightly tighter display tracking for Space Grotesk */
+.brand-text h1 {
+  letter-spacing: -0.025em;
+  text-rendering: optimizeLegibility;
+}
+
+/* Eyebrow subtitle under brand title */
+.brand-text p {
+  letter-spacing: 0.04em;
+  text-rendering: optimizeLegibility;
+}
+
+/* Card titles across all analytical work panels */
+.card-title {
+  letter-spacing: -0.015em;
+  text-rendering: optimizeLegibility;
+}
+
+/* Sales banner and modal offer headlines */
+.sales-banner strong {
+  letter-spacing: -0.015em;
+  text-rendering: optimizeLegibility;
+}
+
+/* Threat alert headline */
+.threat-banner strong {
+  letter-spacing: -0.015em;
+  text-rendering: optimizeLegibility;
+}
+
+/* Lock box headline and modal container text rendering */
+.lock-box,
+.modal-card {
+  text-rendering: optimizeLegibility;
+}
+
+/* Eyebrow and uppercase label tracking for clean legibility at small sizes */
+.metric-label {
+  letter-spacing: 0.08em;
+}
+
+.sales-badge-pill {
+  letter-spacing: 0.06em;
+}
+
+.badge {
+  letter-spacing: 0.04em;
+}
+
+/* ==========================================================================
+   2. Tabular Numbers on Existing Scores, Metrics, and Prices
+   ========================================================================== */
+
+/* Numeric scores, metrics, ratios, and percentages */
+.metric-val,
+#valShannon,
+#valKolmogorov,
+#valPrintable,
+#valSpecial {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Dynamic counter and size badges */
+#payloadSizeBadge,
+#layersCountBadge,
+#matchesCountBadge {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Dynamic threat banner risk percentage and entropy readouts */
+.threat-banner span,
+.threat-banner div {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Sliding window threshold and header status indicators */
+.card-header span {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Pricing buttons, badges, and strike-through pricing */
+.btn-checkout,
+.sales-banner strong,
+.sales-banner del {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* ==========================================================================
+   3. Readable Measure on the Main Work Surface & Ancillary Copy
+   ========================================================================== */
+
+/* Main work surface banner description measure */
+.sales-banner > div:first-child {
+  max-width: 68ch;
+  line-height: 1.5;
+}
+
+/* Payload buffer and code viewers: comfortable reading line height */
+textarea.code-box,
+#payloadInput {
+  line-height: 1.55;
+  tab-size: 2;
+}
+
+pre.code-block,
+#wafCodeViewer {
+  line-height: 1.55;
+  tab-size: 2;
+}
+
+/* Threat banner summary text measure */
+.threat-banner {
+  line-height: 1.45;
+}
+
+/* Modal descriptive copy measure */
+.modal-card p {
+  max-width: 56ch;
+  line-height: 1.55;
+}
+
+.modal-features {
+  line-height: 1.5;
+}
+
+/* Footer reading measure and line height */
+.zoth-footer {
+  line-height: 1.6;
+}
