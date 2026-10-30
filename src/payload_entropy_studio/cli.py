@@ -9,9 +9,9 @@ import argparse
 import json
 import os
 import sys
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Union
 
-from payload_entropy_studio.compat import safe_read_text
+from payload_entropy_studio.compat import safe_read_bytes, safe_read_text
 from payload_entropy_studio.deobfuscator import DeobfuscationEngine
 from payload_entropy_studio.entropy_engine import (
     EntropyClassification,
@@ -129,6 +129,11 @@ def main(argv: Optional[List[str]] = None) -> int:
     args = parser.parse_args(argv)
     c = Colors(force_disable=getattr(args, "no_color", False))
 
+    def get_input_raw(val: str) -> Union[str, bytes]:
+        if os.path.isfile(val):
+            return safe_read_bytes(val)
+        return val
+
     def get_input_str(val: str) -> str:
         if os.path.isfile(val):
             return safe_read_text(val)
@@ -178,8 +183,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         return 0
 
     elif args.command == "entropy":
-        text = get_input_str(args.payload)
-        rep = analyze_entropy_profile(text, window_size=args.window_size)
+        payload_data = get_input_raw(args.payload)
+        rep = analyze_entropy_profile(payload_data, window_size=args.window_size)
 
         if args.json:
             print(json.dumps(rep.to_dict(), indent=2))
@@ -213,8 +218,8 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     elif args.command == "polyglot":
         from payload_entropy_studio.polyglot_analyzer import analyze_polyglot_payload
-        text = get_input_str(args.payload)
-        rep = analyze_polyglot_payload(text)
+        payload_data = get_input_raw(args.payload)
+        rep = analyze_polyglot_payload(payload_data)
 
         if args.json:
             print(json.dumps(rep.to_dict(), indent=2))
@@ -267,9 +272,9 @@ def main(argv: Optional[List[str]] = None) -> int:
             analyze_markov_lsh_profile,
             calculate_ngram_frequencies,
         )
-        text = get_input_str(args.payload)
-        rep = analyze_markov_lsh_profile(text)
-        ngrams = calculate_ngram_frequencies(text, n=args.order)
+        payload_data = get_input_raw(args.payload)
+        rep = analyze_markov_lsh_profile(payload_data)
+        ngrams = calculate_ngram_frequencies(payload_data, n=args.order)
         if args.json:
             out_d = rep.to_dict()
             out_d["ngrams"] = ngrams
@@ -295,14 +300,14 @@ def main(argv: Optional[List[str]] = None) -> int:
             estimate_jaccard_similarity,
             simhash_hex,
         )
-        text = get_input_str(args.payload)
-        sh1 = compute_simhash(text)
-        mh1 = compute_minhash(text, num_perm=32)
+        payload_data = get_input_raw(args.payload)
+        sh1 = compute_simhash(payload_data)
+        mh1 = compute_minhash(payload_data, num_perm=32)
         cmp_result = None
         if args.compare:
-            cmp_text = safe_read_text(args.compare) if os.path.isfile(args.compare) else args.compare
-            sh2 = compute_simhash(cmp_text)
-            mh2 = compute_minhash(cmp_text, num_perm=32)
+            cmp_data = get_input_raw(args.compare)
+            sh2 = compute_simhash(cmp_data)
+            mh2 = compute_minhash(cmp_data, num_perm=32)
             dist = calculate_hamming_distance(sh1, sh2)
             sim = calculate_simhash_similarity(sh1, sh2)
             jacc = estimate_jaccard_similarity(mh1, mh2)
@@ -338,8 +343,8 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     elif args.command == "shellcode":
         from payload_entropy_studio.markov_lsh import detect_shellcode_heuristics
-        text = get_input_str(args.payload)
-        sc_report = detect_shellcode_heuristics(text)
+        payload_data = get_input_raw(args.payload)
+        sc_report = detect_shellcode_heuristics(payload_data)
         if args.json:
             print(json.dumps(sc_report, indent=2))
         else:

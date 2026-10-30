@@ -25,7 +25,7 @@
 ## 💎 Founding Member Access ($19 Lifetime)
 
 - **One-Time Sovereign License**: **$19 Lifetime** (<del>$79 Regular</del>)
-- **Credit Card / Apple Pay / Google Pay**: [Stripe Instant Checkout ($19 USD)](https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L)
+- **Credit Card / Apple Pay / Google Pay**: [Stripe Instant Checkout ($19 USD)](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
 - **Solana Web3 Rails**: Receiver `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`
 - **Instant Activation**: Click *"Activate Key"* on the web app or load with `?licensed=true`.
 

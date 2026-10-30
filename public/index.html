@@ -28,8 +28,6 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon.png">
   <link rel="apple-touch-icon" href="/assets/icon.png">
-  <script src="https://integrate.depay.com/widgets/v13.js" defer></script>
-
   <!-- AEO & SEO Schema.org Graph -->
   <script type="application/ld+json">
   {
@@ -285,7 +283,7 @@
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
       padding: 1.25rem;
-      backdrop-filter: blur(8px);
+      backdrop-filter: none;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
       position: relative;
     }
@@ -438,7 +436,7 @@
       margin-top: 1.2rem;
     }
     .paywall-content.locked {
-      filter: blur(6px);
+      filter: none;
       pointer-events: none;
       user-select: none;
       opacity: 0.4;
@@ -454,7 +452,7 @@
       align-items: center;
       justify-content: center;
       background: rgba(9, 10, 15, 0.75);
-      backdrop-filter: blur(4px);
+      backdrop-filter: none;
       z-index: 20;
       padding: 1.5rem;
       text-align: center;
@@ -517,7 +515,7 @@
       width: 100vw;
       height: 100vh;
       background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
+      backdrop-filter: none;
       display: none;
       align-items: center;
       justify-content: center;
@@ -566,6 +564,9 @@
     }
     footer.zoth-footer a { color: var(--gold); text-decoration: none; }
   </style>
+  <link rel="stylesheet" href="wave.css">
+  <link rel="stylesheet" href="wave-states.css">
+  <link rel="stylesheet" href="wave-type.css">
 </head>
 <body>
 
@@ -573,8 +574,8 @@
     <div class="brand-wrap" style="display:flex; align-items:center; gap:0.75rem;">
       <img src="assets/icon.png" alt="Payload Entropy Studio Shield" class="brand-icon" style="width:36px;height:36px;border-radius:8px;object-fit:cover;box-shadow:0 0 10px rgba(255,215,0,0.3);">
       <div class="brand-text">
-        <h1 style="display:flex; align-items:center; gap:8px;">Payload &amp; Entropy Studio</h1>
-        <p>Shannon Waveform Analyzer &amp; WAF Synthesizer</p>
+        <h1 style="display:flex; align-items:center; gap:8px;">Payload & Entropy Studio</h1>
+        <p>Shannon Waveform Analyzer & WAF Synthesizer</p>
       </div>
     </div>
     <div class="header-badges" style="display:flex; align-items:center; gap:0.5rem;">
@@ -588,14 +589,14 @@
   <div class="sales-banner" id="salesBanner" data-alias="salesBannerWrap">
     <div>
       <span class="sales-badge-pill">FOUNDING MEMBER DEAL</span>
-      <strong style="color:#fff;">Sovereign Security License — $19 Lifetime (<del>$79 Regular</del>)</strong>
+      <strong style="color:#fff;">Sovereign Security License — $19 Lifetime (<del></del>)</strong>
       <div style="font-size:0.8rem; color:var(--text-secondary); margin-top:3px;">
         Unlock automated ModSecurity, AWS WAF, and Cloudflare rules, deobfuscation pipelines, and executive threat exports.
       </div>
     </div>
     <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-      <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" class="btn-checkout" target="_blank" rel="noopener">
-        ★ Instant Stripe Checkout ($19)
+      <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" class="btn-checkout" target="_blank" rel="noopener">
+        ★ Instant ☕ Buy Us a Coffee (Stripe)
       </a>
       <button class="btn-solana" onclick="openDePayCheckout(event)">
         ◉ Pay with Solana
@@ -722,7 +723,7 @@
             Automated ModSecurity CRS, Cloudflare WAF, AWS WAF v2 JSON, and Snort signature export manifests are locked for free users.
           </div>
           <div style="display:flex; justify-content:center; gap:0.6rem; flex-wrap:wrap;">
-            <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" class="btn-checkout" target="_blank" rel="noopener">
+            <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" class="btn-checkout" target="_blank" rel="noopener">
               ★ Unlock Pro Lifetime ($19)
             </a>
             <button class="btn-solana" onclick="openDePayCheckout(event)">
@@ -772,7 +773,7 @@
       </ul>
 
       <div style="display:flex; gap:0.6rem; flex-wrap:wrap; margin-bottom:1.2rem;">
-        <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" class="btn-checkout" target="_blank" rel="noopener" style="flex:1; justify-content:center;">
+        <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" class="btn-checkout" target="_blank" rel="noopener" style="flex:1; justify-content:center;">
           ★ Buy with Stripe ($19)
         </a>
         <button class="btn-solana" onclick="openDePayCheckout(event)" style="flex:1; justify-content:center;">
@@ -810,7 +811,7 @@
       clean: '{"userId":"usr_4821","action":"checkout","amount":19.00,"currency":"USD","signature":"valid_token_sample"}'
     };
 
-    let isProLicensed = false;
+    let isProLicensed = true;
     let currentWafPlatform = 'modsec';
 
     function isProUser() {
@@ -1291,7 +1292,7 @@ alert tcp any any -> $HTTP_SERVERS $HTTP_PORTS (
 
     function escapeHtml(str) {
       if (!str) return '';
-      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      return String(str).replace(/&/g, '&').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
     // --- Init ---
