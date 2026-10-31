@@ -13,15 +13,6 @@ Live Web Application: [**https://entropystudio.nullai.tech**](https://entropystu
 
 ---
 
-## 💎 Founding Member Access ($19 Lifetime)
-
-- **One-Time Sovereign License**: **$19 Lifetime** (<del>$79 Regular</del>)
-- **Credit Card / Apple Pay / Google Pay**: [Stripe Instant Checkout](https://buy.stripe.com/7sI7sA8hM2X8eFG8ww)
-- **Solana Web3 Rails**: Receiver `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`
-- **Instant Activation**: Click *"Activate Key"* on the web app or load with `?licensed=true`.
-
----
-
 ## ✨ Features
 
 - 🛡️ **Multi-Vector Threat Analyzer**: Evaluates input strings for 10+ major attack vectors including SQL Injection, Cross-Site Scripting (XSS), Command Injection, Path Traversal (LFI), Server-Side Template Injection (SSTI), SSRF, XXE, and Prototype Pollution, with automated **CWE** and **MITRE ATT&CK** classification.
@@ -208,6 +199,6 @@ pytest -v
 ---
 
 ## 📜 License & Attribution
-- **Engineered by:** Neal Frazier Tech ([@1nc0gn30](https://github.com/1nc0gn30)) • [NullAI Platform](https://nullai.tech)
-- **License:** MIT License © 2026 Neal Frazier Tech
+- **Engineered by:** [1nc0gn30](https://github.com/1nc0gn30) • [NullAI Platform](https://nullai.tech)
+- **License:** MIT License © 2026 1nc0gn30
 
