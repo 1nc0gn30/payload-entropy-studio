@@ -19,7 +19,7 @@
 - 🌐 Live Web Application: [**https://entropystudio.nullai.tech**](https://entropystudio.nullai.tech)
 - 💻 Zoth Studio Enclave: [**https://zoth.nullai.tech/tools/payload-entropy-studio**](https://zoth.nullai.tech/tools/payload-entropy-studio)
 - ☕ **Support Development**: [Buy Us a Coffee (Stripe)](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X) | Solana Tip: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`
-- ⚡ Attribution: Engineered by Neal Frazier Tech ([@1nc0gn30](https://github.com/1nc0gn30)) • NullAI Platform.
+- ⚡ Attribution: Engineered by 1nc0gn30 • NullAI ([@1nc0gn30](https://github.com/1nc0gn30)) • NullAI Platform.
 
 ---
 
@@ -233,6 +233,6 @@ pytest -v
 ---
 
 ## 📜 License & Attribution
-- **Engineered by:** Neal Frazier Tech ([@1nc0gn30](https://github.com/1nc0gn30)) • [NullAI Platform](https://nullai.tech)
-- **License:** MIT License © 2026 Neal Frazier Tech
+- **Engineered by:** 1nc0gn30 • NullAI ([@1nc0gn30](https://github.com/1nc0gn30)) • [NullAI Platform](https://nullai.tech)
+- **License:** MIT License © 2026 1nc0gn30 • NullAI
 

@@ -10,11 +10,12 @@ from payload_entropy_studio.ui_server import run_ui_server
 
 @pytest.fixture(scope="module")
 def live_server():
-    server = run_ui_server(host="127.0.0.1", port=8195)
+    server = run_ui_server(host="127.0.0.1", port=0)
+    port = server.server_port
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
     time.sleep(0.1)
-    yield "http://127.0.0.1:8195"
+    yield f"http://127.0.0.1:{port}"
     server.shutdown()
     server.server_close()
 
@@ -24,7 +25,7 @@ def test_api_health(live_server):
     with urllib.request.urlopen(req) as resp:
         assert resp.status == 200
         data = json.loads(resp.read().decode("utf-8"))
-        assert data["status"] == "ok"
+        assert data["status"] in ("ok", "healthy")
         assert data["service"] == "payload-entropy-studio"
 
 

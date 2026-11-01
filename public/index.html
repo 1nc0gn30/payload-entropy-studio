@@ -6,7 +6,7 @@
   <title>Payload & Entropy Studio | Sovereign Security Intelligence</title>
   <meta name="description" content="100% In-Browser Shannon entropy waveform visualizer, obfuscated payload deobfuscator, and automated WAF rule synthesizer. Zero cloud egress.">
   <meta name="keywords" content="entropy analysis, Shannon entropy, payload deobfuscator, shellcode detector, WAF rule generator, WebCrypto, zero egress">
-  <meta name="author" content="Neal Frazier (@1nc0gn30) • Neal Frazier Tech">
+  <meta name="author" content="1nc0gn30 (@1nc0gn30) • 1nc0gn30 • NullAI">
   
   <!-- OpenGraph / Twitter -->
   <meta property="og:title" content="Payload & Entropy Studio | Sovereign Threat Intelligence">
@@ -48,12 +48,12 @@
         },
         "creator": {
           "@type": "Person",
-          "name": "Neal Frazier",
-          "url": "https://nealfrazier.tech"
+          "name": "1nc0gn30",
+          "url": "https://nullai.tech"
         },
         "publisher": {
           "@type": "Organization",
-          "name": "Neal Frazier Tech • NullAI Platform",
+          "name": "1nc0gn30 • NullAI • NullAI Platform",
           "url": "https://nullai.tech"
         }
       },
@@ -79,10 +79,10 @@
           },
           {
             "@type": "Question",
-            "name": "What is included with the Pro lifetime license?",
+            "name": "How can I support Payload & Entropy Studio?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "A Free (100% Open Access) payment unlocks exportable ModSecurity, Cloudflare, AWS WAF, and Snort rule bundles, executive threat reports, and high-resolution waveform exports."
+              "text": "Payload & Entropy Studio is 100% free and open-access by default with zero paywalls. You can support the project via Buy Us a Coffee (Stripe) or tip via Solana (GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)."
             }
           }
         ]
@@ -610,7 +610,7 @@
 </div>
 
 
-  <header>
+  <header style="flex-wrap:wrap; gap:0.75rem;">
     <div class="brand-wrap" style="display:flex; align-items:center; gap:0.75rem;">
       <img src="assets/icon.png" alt="Payload Entropy Studio Shield" class="brand-icon" style="width:36px;height:36px;border-radius:8px;object-fit:cover;box-shadow:0 0 10px rgba(255,215,0,0.3);">
       <div class="brand-text">
@@ -618,35 +618,11 @@
         <p>Shannon Waveform Analyzer & WAF Synthesizer</p>
       </div>
     </div>
-    <div class="header-badges" style="display:flex; align-items:center; gap:0.5rem;">
+    <div class="header-badges" style="display:flex; flex-wrap:wrap; align-items:center; gap:0.5rem;">
       <span class="badge badge-egress">ZERO CLOUD EGRESS</span>
       <span class="badge badge-pro" id="licenseBadge" style="color: #10B981; border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.15); font-weight: 800;">✦ 100% UNLOCKED</span>
-      <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="background: #D4AF37; color: #08080B; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-size: 11px;">☕ Buy Us a Coffee</a>
-      <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="if(navigator.clipboard){navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied!';}" style="background: rgba(20,241,149,0.15); color: #14F195; border: 1px solid rgba(20,241,149,0.45); padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-size: 11px;">◎ Tip SOL</a>
     </div>
   </header>
-
-  <!-- Sales Banner -->
-  <div class="sales-banner" id="salesBanner" data-alias="salesBannerWrap">
-    <div>
-      <span class="sales-badge-pill">100% FREE & OPEN ACCESS</span>
-      <strong style="color:#fff;">Sovereign Security License — Free (100% Open Access) (<del></del>)</strong>
-      <div style="font-size:0.8rem; color:var(--text-secondary); margin-top:3px;">
-        Unlock automated ModSecurity, AWS WAF, and Cloudflare rules, deobfuscation pipelines, and executive threat exports.
-      </div>
-    </div>
-    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-      <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" class="btn-checkout" target="_blank" rel="noopener">
-        ★ Instant ☕ Buy Us a Coffee (Stripe)
-      </a>
-      <button class="btn-solana" onclick="openDePayCheckout(event)">
-        ◉ Pay with Solana
-      </button>
-      <button class="btn-activate" id="btn-paywall-key" onclick="openLicenseModal()">
-        ✦ Activate Key
-      </button>
-    </div>
-  </div>
 
   <main>
     <!-- Top Action Deck -->
@@ -753,30 +729,9 @@
       </div>
     </div>
 
-    <!-- Frosted Glass Output Paywall Section (WAF Generator) -->
-    <div class="paywall-wrap" id="wafPaywallWrap" data-alias="codePaywallWrap">
-      <div class="paywall-overlay" id="outputPaywallOverlay" data-alias="paywallOverlay">
-        <div class="lock-box">
-          <div style="font-size:1.1rem; font-weight:800; color:var(--gold); margin-bottom:0.4rem;">
-            ★ PRO WAF RULE GENERATOR & MITIGATION SUITE
-          </div>
-          <div style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem; line-height:1.4;">
-            Automated ModSecurity CRS, Cloudflare WAF, AWS WAF v2 JSON, and Snort signature export manifests are locked for free users.
-          </div>
-          <div style="display:flex; justify-content:center; gap:0.6rem; flex-wrap:wrap;">
-            <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" class="btn-checkout" target="_blank" rel="noopener">
-              ★ 100% Free & Unlocked
-            </a>
-            <button class="btn-solana" onclick="openDePayCheckout(event)">
-              ◉ Pay with Solana
-            </button>
-            <button class="btn-activate" onclick="openLicenseModal()">
-              ✦ Enter Key
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="paywall-content locked" id="wafPaywallContent">
+    <!-- Automated Multi-Engine WAF Synthesizer -->
+    <div>
+      <div>
         <div class="card" style="margin-top:0.5rem;">
           <div class="card-header">
             <span class="card-title">❖ Automated Multi-Engine WAF Synthesizer</span>
@@ -795,51 +750,13 @@
 
   </main>
 
-  <!-- Pro Modal -->
-  <div class="modal-backdrop" id="licenseModal" data-alias="paywall-modal">
-    <div class="modal-card">
-      <button class="modal-close" onclick="closeLicenseModal()">×</button>
-      <div style="font-size:1.2rem; font-weight:800; color:#fff; margin-bottom:0.4rem;">⭐ Upgrade to Payload & Entropy Studio Pro</div>
-      <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.4;">
-        Deploy high-precision threat mitigation with automated multi-engine WAF rule synthesis and zero-cloud telemetry.
-      </p>
-
-      <ul class="modal-features">
-        <li><span>✔</span> Unlimited In-Browser Sliding Window Waveform Analysis</li>
-        <li><span>✔</span> Automated WAF Rule Synthesis (ModSecurity, Cloudflare, AWS WAF, Snort)</li>
-        <li><span>✔</span> Layer-by-Layer Recursive Deobfuscation Pipeline</li>
-        <li><span>✔</span> Executive Threat Dossiers (JSON & PDF Export)</li>
-        <li><span>✔</span> Shannon Entropy & Kolmogorov Complexity Profiler</li>
-        <li><span>✔</span> Permanent Lifetime Access & Future Security Upgrades</li>
-      </ul>
-
-      <div style="display:flex; gap:0.6rem; flex-wrap:wrap; margin-bottom:1.2rem;">
-        <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" class="btn-checkout" target="_blank" rel="noopener" style="flex:1; justify-content:center;">
-          ★ Buy with Stripe (Free (100% Open Access))
-        </a>
-        <button class="btn-solana" onclick="openDePayCheckout(event)" style="flex:1; justify-content:center;">
-          ◉ Pay with Solana
-        </button>
-      </div>
-
-      <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:1rem;">
-        <div style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.4rem;">Have a receipt email or license key?</div>
-        <div style="display:flex; gap:0.5rem;">
-          <input type="text" id="licenseInput" data-alias="licenseKeyInput" class="text-input" style="background:#090a0f; border:1px solid rgba(255,255,255,0.15); border-radius:6px; color:#fff; padding:6px 10px; width:100%;" placeholder="e.g. user@domain.com or ENTROPY-PRO-2026">
-          <input type="hidden" id="license-input" data-alias="license-input">
-          <button id="btnActivateKey" class="btn-sm primary" onclick="activateLicenseKey(document.getElementById('licenseInput').value)">Activate</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div id="toastMessage" class="toast-container" data-alias="toast"></div>
   <div id="toast" style="display:none;" aria-hidden="true"></div>
 
   <footer class="zoth-footer">
     <div><strong>Payload & Entropy Studio</strong> — Sovereign Security Intelligence & Threat Analysis.</div>
     <div style="margin-top:0.3rem;">
-      Engineered by Neal Frazier Tech (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener">@1nc0gn30</a>) &bull; <a href="https://nullai.tech" target="_blank" rel="noopener">NullAI Platform</a> &bull; <a href="https://github.com/1nc0gn30/payload-entropy-studio" target="_blank" rel="noopener">GitHub</a>
+      Engineered by 1nc0gn30 • NullAI (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener">@1nc0gn30</a>) &bull; <a href="https://nullai.tech" target="_blank" rel="noopener">NullAI Platform</a> &bull; <a href="https://github.com/1nc0gn30/payload-entropy-studio" target="_blank" rel="noopener">GitHub</a>
     </div>
   </footer>
 
@@ -883,7 +800,7 @@
     function checkLicense() {
       isProLicensed = true;
 
-      const wrap = document.getElementById('wafPaywallWrap') || document.getElementById('codePaywallWrap');
+      const wrap = document.getElementById('wafPaywallWrap') || document.getElementById('cosolanaTipwallWrap');
       const content = document.getElementById('wafPaywallContent');
       const badge = document.getElementById('licenseBadge') || document.getElementById('headerProBadge');
       const banner = document.getElementById('salesBanner') || document.getElementById('salesBannerWrap');
@@ -899,52 +816,6 @@
       }
       if (banner) banner.style.display = 'none';
       if (activateBtn) activateBtn.style.display = 'none';
-    }
-
-    function openLicenseModal() {
-      document.getElementById('licenseModal').classList.add('open');
-    }
-
-    function closeLicenseModal() {
-      document.getElementById('licenseModal').classList.remove('open');
-    }
-
-    function activateLicenseKey(providedKey) {
-      let val = providedKey;
-      if (!val) {
-        const input = document.getElementById('licenseInput') || document.getElementById('license-input');
-        val = input ? input.value.trim() : '';
-      }
-      if (val && (val.length > 3 || val.toUpperCase() === 'ENTROPY-PRO-2026' || val.toUpperCase() === 'PAYLOAD-PRO-2026' || val.toUpperCase() === 'SOVEREIGN-PRO-2026' || val.includes('@'))) {
-        localStorage.setItem('entropy_studio_licensed', 'true');
-        localStorage.setItem('payload-entropy-studio_pro_licensed', 'true');
-        checkLicense();
-        closeLicenseModal();
-        showToast('⭐ Payload & Entropy Studio Pro Activated! All WAF tools unlocked.');
-      } else {
-        showToast('Please enter a valid receipt email or license key.');
-      }
-    }
-
-    function openDePayCheckout(e) {
-      if (e && e.preventDefault) e.preventDefault();
-      if (typeof DePayButtons !== 'undefined') {
-        try {
-          DePayButtons.init({
-            integration: '428790dd-7ad1-407c-8ecf-c048c77a4cb8',
-            container: document.body
-          });
-          return;
-        } catch (err) {
-          console.warn('DePay widget initialization error:', err);
-        }
-      }
-      window.open('https://solana.fm/address/GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK', '_blank');
-      openLicenseModal();
-    }
-
-    function triggerSolanaCheckout(e) {
-      openDePayCheckout(e);
     }
 
     function loadPreset(key) {
@@ -1314,5 +1185,6 @@ alert tcp any any -> $HTTP_SERVERS $HTTP_PORTS (
       loadPreset('sql');
     });
   </script>
+  <script src="/assets/sovereign-upgrade.js" defer></script>
 </body>
 </html>
