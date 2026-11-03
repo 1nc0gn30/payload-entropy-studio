@@ -236,3 +236,28 @@ pytest -v
 - **Engineered by:** 1nc0gn30 • NullAI ([@1nc0gn30](https://github.com/1nc0gn30)) • [NullAI Platform](https://nullai.tech)
 - **License:** MIT License © 2026 1nc0gn30 • NullAI
 
+---
+
+## 🏛️ ZothOS v3.4, Zoth Studio v2 & Obsidian Second Brain Ecosystem
+
+### Cross-Surface Integration Matrix
+
+| Surface | Endpoint / Binary | Capabilities |
+| :--- | :--- | :--- |
+| **Standalone Workstation** | `http://127.0.0.1:8195` | 100% Free & Open-Access Web Deck, live `/health` & REST telemetry |
+| **Zoth Studio v2 Route** | `http://127.0.0.1:3000/tools/payload-entropy-studio` | Interactive God-Mode component inside Zoth Studio (`https://zoth.nullai.tech`) |
+| **ZothOS v3.4 CLI & TUI** | `payload-entropy-studio` / `payload-entropy-studio-tui` | Global binary in `/usr/local/bin/` with Unicode `U+2800` Braille TUI & `--json` output |
+| **ZothOS-Lite Web Desktop** | `http://127.0.0.1:8145` | Browser-native KDE-style window manager & terminal launcher |
+| **Zoth Obsidian Tracker** | `http://127.0.0.1:8151` | Interactive Obsidian Second Brain vault explorer (`~/Documents/Obsidian Vault/Studio/Tools/Studio payload-entropy-studio.md`) |
+| **Neuro-Memory STDP Cortex** | `http://127.0.0.1:8094` | 3-Factor STDP synaptic memory daemon & 21-tool MCP server |
+
+```bash
+# Inspect CLI & Unicode U+2800 Braille TUI on ZothOS v3.4
+payload-entropy-studio --help
+payload-entropy-studio-tui --status
+payload-entropy-studio-tui --json
+
+# Verify Second Brain Vault & 12-Step Verification Gallery on :8151
+zoth-obsidian-tracker --verify
+```
+
