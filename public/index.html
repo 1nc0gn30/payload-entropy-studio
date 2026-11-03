@@ -1176,7 +1176,7 @@ alert tcp any any -> $HTTP_SERVERS $HTTP_PORTS (
 
     function escapeHtml(str) {
       if (!str) return '';
-      return String(str).replace(/&/g, '&').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
     // --- Init ---
