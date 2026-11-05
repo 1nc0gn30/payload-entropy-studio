@@ -1185,6 +1185,22 @@ alert tcp any any -> $HTTP_SERVERS $HTTP_PORTS (
       loadPreset('sql');
     });
   </script>
-  <script src="/assets/sovereign-upgrade.js" defer></script>
+  
+
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function() {
+      if (window.createSovereignTutorial) {
+        window.createSovereignTutorial({
+          toolId: "payload-entropy-studio",
+          toolName: "Payload Entropy Studio",
+          tagline: "Visual Shannon entropy scanner for detecting obfuscated and encrypted payloads!",
+          accentColor: "#F59E0B",
+          steps: [{"icon": "\ud83d\udcc9", "title": "What is Data Entropy?", "desc": "Entropy measures randomness. Plain English text has low entropy; encrypted or hidden malware has super high entropy!"}, {"icon": "\ud83d\udd0d", "title": "Find Hidden Backdoors", "desc": "Upload any file or code snippet to instantly spot hidden encrypted shellcode or obfuscated strings."}, {"icon": "\ud83d\udcca", "title": "Visual Heatmap Curves", "desc": "Inspect interactive wave graphs showing exactly where in a file the suspicious random bytes begin."}]
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>
