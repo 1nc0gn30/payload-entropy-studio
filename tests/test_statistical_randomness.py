@@ -45,8 +45,9 @@ def test_serial_correlation():
 
 
 def test_analyze_statistical_randomness_packer_detection():
-    # Random packed payload simulation
-    crypto_payload = os.urandom(1024)
+    # Deterministic high-entropy pseudo-random encrypted payload simulation
+    import random
+    crypto_payload = random.Random(42).randbytes(1024)
     report = analyze_statistical_randomness(crypto_payload)
 
     assert isinstance(report, StatisticalRandomnessReport)
