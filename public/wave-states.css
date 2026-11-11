@@ -20,9 +20,7 @@
 .btn-activate:focus-visible,
 .btn-sm:focus-visible,
 .modal-close:focus-visible,
-#activateKeyBtn:focus-visible,
-#btnActivateKey:focus-visible,
-#btn-paywall-key:focus-visible {
+.btn-checkout:focus-visible {
   outline: 2px solid var(--gold) !important;
   outline-offset: 2px !important;
   box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.25) !important;
@@ -31,7 +29,6 @@
 textarea.code-box:focus-visible,
 #payloadInput:focus-visible,
 input.text-input:focus-visible,
-#licenseInput:focus-visible,
 select.sample-picker:focus-visible,
 #sampleSelect:focus-visible {
   outline: 2px solid var(--gold) !important;
@@ -40,7 +37,7 @@ select.sample-picker:focus-visible,
 }
 
 .badge-pro:focus-visible,
-#licenseBadge:focus-visible {
+#openBadge:focus-visible {
   outline: 2px solid var(--gold) !important;
   outline-offset: 2px !important;
   box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3) !important;

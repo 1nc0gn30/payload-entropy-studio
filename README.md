@@ -1,120 +1,134 @@
 <div align="center">
-  <img src="assets/hero-banner.svg" alt="Payload Entropy Studio — Sovereign Architecture Banner" width="100%" />
+  <img src="assets/hero-banner.svg" alt="Payload & Entropy Studio banner" width="100%" />
 </div>
 
-<br />
+# Payload & Entropy Studio
 
-# 🛡️ Payload & Entropy Studio
+[![CI](https://github.com/1nc0gn30/payload-entropy-studio/actions/workflows/ci.yml/badge.svg)](https://github.com/1nc0gn30/payload-entropy-studio/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-10B981?style=flat-square)](LICENSE)
+[![Port](https://img.shields.io/badge/loopback-127.0.0.1%3A8080-38BDF8?style=flat-square)](#port)
 
-[![Live App](https://img.shields.io/badge/Live_App-entropystudio.nullai.tech-gold?style=flat-square)](https://entropystudio.nullai.tech)
-[![Access: 100% Free](https://img.shields.io/badge/Access-100%25%20Free%20%26%20Open-10b981?style=flat-square)](https://entropystudio.nullai.tech)
-[![Zoth Studio Ready](https://img.shields.io/badge/Zoth%20Studio-God%20Mode%20Active-D4AF37?style=flat)](https://zoth.nullai.tech/tools/payload-entropy-studio)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Zero Dependencies](https://img.shields.io/badge/dependencies-0%20runtime-success.svg)](https://github.com/1nc0gn30/payload-entropy-studio)
-[![MCP Server](https://img.shields.io/badge/MCP-FastMCP%202024--11--05-blueviolet.svg)](https://modelcontextprotocol.io/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+Offline payload analyzer for security work: classifies attack strings (SQLi, XSS, command injection, traversal, SSTI, SSRF, XXE, prototype pollution), recursively de-obfuscates encoded input, profiles Shannon entropy and byte distribution, fingerprints payloads with SimHash/MinHash, flags shellcode patterns, and generates WAF / IDS rules. Ships as a Python CLI, a stdio MCP server, a loopback REST API, and a browser UI. The Python runtime uses only the standard library.
 
-> **100% In-Browser Shannon Entropy Waveform Visualizer, Obfuscated Payload Deobfuscator & Multi-Engine WAF Synthesizer with Zero Cloud Egress. 100% Free & Open Access.**
+- Zoth Studio v2 dossier: https://zoth.nullai.tech/tools/payload-entropy-studio
+- Web build: https://entropystudio.nullai.tech
+- Source: https://github.com/1nc0gn30/payload-entropy-studio
 
-- 🌐 Live Web Application: [**https://entropystudio.nullai.tech**](https://entropystudio.nullai.tech)
-- 💻 Zoth Studio Enclave: [**https://zoth.nullai.tech/tools/payload-entropy-studio**](https://zoth.nullai.tech/tools/payload-entropy-studio)
-- ☕ **Support Development**: [Buy Us a Coffee (Stripe)](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X) | Solana Tip: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`
-- ⚡ Attribution: Engineered by 1nc0gn30 • NullAI ([@1nc0gn30](https://github.com/1nc0gn30)) • NullAI Platform.
+## What It Does
 
----
+- **Threat analysis** — regex signature matching across the major web attack classes, a 0-100 risk score, severity, and CWE / MITRE ATT&CK mappings.
+- **De-obfuscation** — repeatedly unwraps URL encoding (including double/triple), hex escapes, Unicode escapes, Base64, HTML entities, and string concatenation, recording each layer.
+- **Entropy profiling** — global and sliding-window Shannon entropy (0-8 bits/byte), 256-bin byte histogram, character-class ratios, and a zlib compression ratio as a practical Kolmogorov-complexity bound.
+- **Markov / n-gram analysis** — transition entropy and KL divergence against text and HTTP baselines.
+- **Locality-sensitive fingerprints** — 64-bit SimHash with Hamming distance and MinHash Jaccard estimates for near-duplicate clustering.
+- **Shellcode heuristics** — NOP sleds, GetPC sequences, `syscall` / `int 0x80`, XOR decoder loops, non-printable density.
+- **Polyglot and AST evasion checks** — dual-context payloads, magic-byte mismatches, obfuscated script / query grammar.
+- **WAF rule synthesis** — ModSecurity (OWASP CRS style), Cloudflare expressions, AWS WAF v2 JSON, and Suricata rules derived from the analysis.
 
-## ⚡ ZothOS CLI Binary (`payload-entropy-studio` / `payload-entropy`)
+Entropy classes used by `entropy_engine.py`:
 
-```bash
-# Check version and JSON telemetry
-payload-entropy-studio --version
-payload-entropy-studio --json
+| Shannon entropy (bits/byte) | Class |
+| :--- | :--- |
+| < 4.5 | `NORMAL_TEXT` |
+| 4.5 - 5.5 | `CODE_SCRIPT` |
+| 5.5 - 6.8 | `OBFUSCATED_DATA` |
+| 6.8 - 8.0 | `HIGH_ENTROPY_PACKED` |
 
-# Run complete threat analysis on a payload
-payload-entropy-studio analyze "1' UNION SELECT null, username, password FROM users--"
+## How It Works
 
-# Synthesize ModSecurity and Cloudflare WAF rules
-payload-entropy-studio waf "1' UNION SELECT null, username, password FROM users--" --platform modsec
-
-# Calculate Shannon byte entropy
-payload-entropy-studio entropy "A" * 100
-
-# Start standalone Web Workstation on port 8080
-python3 server.py
-# or
-payload-entropy-studio serve --port 8080
+```mermaid
+flowchart LR
+    IN["payload (string or file)"] --> DE["deobfuscator.py"]
+    DE --> TA["threat_analyzer.py"]
+    DE --> EE["entropy_engine.py / markov_lsh.py"]
+    TA --> WAF["waf_generator.py"]
+    TA --> OUT["CLI / MCP / REST / UI"]
+    EE --> OUT
+    WAF --> OUT
 ```
 
----
+| Module | Responsibility |
+| :--- | :--- |
+| `threat_analyzer.py` | Signature matching, scoring, CWE / ATT&CK mapping |
+| `deobfuscator.py` | Recursive decoding layers |
+| `entropy_engine.py` | Shannon entropy, sliding window, byte histogram, randomness tests |
+| `markov_lsh.py` | Markov transition entropy, KL divergence, SimHash, MinHash, shellcode heuristics |
+| `polyglot_analyzer.py` | Polyglot / magic-byte checks |
+| `ast_obfuscation_detector.py` | Script and query grammar evasion |
+| `waf_generator.py` | ModSecurity, Cloudflare, AWS WAF, Suricata output |
+| `ui_server.py` | Threaded HTTP server for `public/` and `/api/*` |
+| `mcp_server.py` | JSON-RPC 2.0 MCP server over stdio |
+| `cli.py` | argparse CLI |
 
-## ✨ Features
+Launchers:
 
-- 🛡️ **Multi-Vector Threat Analyzer**: Evaluates input strings for 10+ major attack vectors including SQL Injection, Cross-Site Scripting (XSS), Command Injection, Path Traversal (LFI), Server-Side Template Injection (SSTI), SSRF, XXE, and Prototype Pollution, with automated **CWE** and **MITRE ATT&CK** classification.
-- 🔓 **Recursive De-obfuscation Engine**: Unmasks multi-layered evasions across URL percent encoding (including double/triple encoding), Hex escapes, Unicode escapes, Base64 blocks, HTML entities, and string concatenations.
-- 📊 **Shannon Entropy & Kolmogorov Complexity Profiler**: Computes global and sliding-window byte entropy ($H(X)$ from 0.0 to 8.0 bits/byte) to instantly detect encrypted reverse shells, packed payloads, and shellcode.
-- 🔄 **Markov Transition Entropy & KL Divergence**: Evaluates first-order byte transition probability matrices, conditional transition entropy $H(X_t \mid X_{t-1})$, and Kullback-Leibler divergence $D_{KL}(P \parallel Q)$ against natural alphanumeric / HTTP baseline distributions.
-- 🎯 **SimHash & MinHash LSH Clustering**: 64-bit Locality-Sensitive Hashing (SimHash) with Hamming distance metrics and universal MinHash permutations for real-time near-duplicate payload clustering.
-- 🧬 **x86/x64 Shellcode Heuristics Engine**: Detects NOP sled slides (`\x90`, polymorphic slides), GetPC routines (`call $+5$; pop reg`, x87 FPU `fnstenv`), syscall / software interrupts (`0x0F 0x05`, `0xCD 0x80`), self-decrypting XOR loops, and non-printable byte density.
-- 🧱 **Automated WAF & IDS Rule Generator**: Automatically synthesizes production-ready defense rules in **ModSecurity 3 / OWASP CRS**, **Cloudflare WAF Expression**, **AWS WAF v2 JSON**, and **Suricata IDS**.
-- 🎨 **Payload Entropy Studio Web UI**: Real-time payload decoder, entropy spectrum visualizer, interactive attack sample library, and 1-click rule copy (design influenced by Material 3 tokens).
-- ⚡ **Zero Third-Party Runtime Dependencies**: 100% Python Standard Library runtime (`re`, `math`, `zlib`, `collections`, `urllib`, `html`, `base64`, `http.server`, `argparse`).
-- 🤖 **FastMCP Server Protocol**: Full Model Context Protocol (MCP) JSON-RPC 2.0 stdio server for Claude Desktop, Cursor, Cline, and autonomous AI agents.
+- `server.py` — starts `ui_server` on `127.0.0.1:8080` (`PORT` / `HOST` env override).
+- `bin/payload-entropy.js` — Node wrapper. `payload-entropy web` runs `server.py`; no arguments (or `desktop` / `--gui`) opens the Electron shell in `electron/main.cjs`, falling back to the web server if Electron is not installed; anything else is forwarded to the Python CLI.
+- `bin/payload-entropy-studio-tui` — Braille-sparkline terminal view (`--json`, `--benchmark`, `--frames N`).
+- `payload-entropy.desktop` — Linux desktop entry calling `payload-entropy desktop` / `payload-entropy web`.
 
----
+## Install
 
-## 🚀 Quick Start
+Requires Python 3.9+. Node.js is only needed for `bin/payload-entropy.js` and the optional Electron shell.
 
-### Installation
 ```bash
-# Clone the repository
-git clone https://github.com/NullAITech/payload-entropy-studio.git
+git clone https://github.com/1nc0gn30/payload-entropy-studio.git
 cd payload-entropy-studio
+python3 -m pip install -e .
 
-# Install in editable mode
-pip install -e .
+# Verify
+payload-entropy --version
+payload-entropy --help
+
+# Start the web UI + REST API on http://127.0.0.1:8080
+python3 server.py
+# or: npm start
+# or: payload-entropy serve
 ```
 
----
-
-## 💻 CLI Usage
+Optional desktop shell:
 
 ```bash
-# Analyze a suspicious attack payload
-payload-entropy analyze "%3Cscript%3Ealert(document.cookie)%3C/script%3E"
-
-# Recursively de-obfuscate a multi-layered payload
-payload-entropy deobfuscate "%252e%252e%252f%252e%252e%252fetc%2fpasswd"
-
-# Profile Shannon entropy and byte distribution
-payload-entropy entropy "payload.bin" --window-size 32
-
-# Profile first-order Markov transition entropy & KL divergence
-payload-entropy markov "SELECT * FROM users WHERE id=1" --n 2
-
-# Compute 64-bit SimHash and MinHash LSH fingerprint
-payload-entropy lsh "<script>alert(1)</script>"
-
-# Scan raw binary or hex for x86/x64 shellcode patterns
-payload-entropy shellcode "909090909090909031c050682f2f7368682f62696e89e3505389e1b00bcd80" --hex
-
-# Synthesize WAF rules (ModSecurity, Cloudflare, AWS WAF, Suricata)
-payload-entropy waf "1' UNION SELECT 1,username,password FROM users--"
-
-# Launch Payload Studio Web UI (Material 3 influenced)
-payload-entropy serve --port 8095
-
-# Start FastMCP stdio server for LLM agents
-payload-entropy mcp
-
-# Run system diagnostics
-payload-entropy doctor
+npm install
+npm run app
 ```
 
----
+## CLI Reference
 
-## 🤖 Model Context Protocol (MCP) Setup
+Entry points: `payload-entropy` and `payloadviz` (both `payload_entropy_studio.cli:main`); `python3 -m payload_entropy_studio` also works. The npm `bin` additionally exposes `payload-entropy-studio` via `bin/payload-entropy.js`. `payload` arguments accept a literal string or a file path. All analysis subcommands accept `--no-color`.
 
-Add `payload-entropy-studio` to your Claude Desktop or Cursor configuration:
+| Command | Purpose |
+| :--- | :--- |
+| `--json` | Print diagnostics as JSON |
+| `--status` | Probe `http://127.0.0.1:8080/health` and print a JSON status object |
+| `analyze PAYLOAD [--json]` | Threat analysis report |
+| `deobfuscate PAYLOAD [--json]` | Decoding layers |
+| `entropy PAYLOAD [-w N] [--json]` | Entropy profile (sliding window default 32) |
+| `waf PAYLOAD [-t all\|modsecurity\|cloudflare\|aws\|suricata]` | WAF / IDS rules |
+| `polyglot PAYLOAD [--json]` | Polyglot / magic-byte audit |
+| `ast PAYLOAD [--json]` | Grammar evasion analysis |
+| `markov PAYLOAD [-n ORDER] [--json]` | n-gram / Markov profile |
+| `lsh` / `simhash` / `fingerprint PAYLOAD [-c OTHER] [--json]` | SimHash / MinHash, optional comparison |
+| `shellcode PAYLOAD [--json]` | Shellcode heuristics |
+| `serve [--host H] [--port P]` | Web UI + REST API (default `127.0.0.1:8080`) |
+| `status [--host H] [--port P]` | Same as `--status` with explicit target |
+| `mcp` | MCP stdio server |
+| `doctor` / `diagnostics` / `platform [--json]` | Diagnostics |
+| `test-self` | Built-in self-check |
+
+Examples:
+
+```bash
+payload-entropy analyze "%3Cscript%3Ealert(document.cookie)%3C/script%3E" --json
+payload-entropy deobfuscate "%252e%252e%252f%252e%252e%252fetc%2fpasswd"
+payload-entropy entropy ./sample.bin -w 64
+payload-entropy waf "1' UNION SELECT 1,username,password FROM users--" -t modsecurity
+payload-entropy lsh "<script>alert(1)</script>" -c "<script>alert(2)</script>"
+```
+
+## MCP and REST Reference
+
+### MCP (stdio)
 
 ```json
 {
@@ -127,137 +141,47 @@ Add `payload-entropy-studio` to your Claude Desktop or Cursor configuration:
 }
 ```
 
-### Registered MCP Tools:
-- `payload_analyze`: Full multi-vector threat analysis, risk scoring, CWE & MITRE ATT&CK mapping.
-- `payload_deobfuscate`: Step-by-step recursive de-obfuscation history.
-- `payload_entropy`: Shannon entropy score, sliding window heatmap, and byte distribution.
-- `payload_markov_profile`: Markov transition entropy $H(X_t \mid X_{t-1})$ and KL divergence against natural baselines.
-- `payload_lsh_fingerprint`: 64-bit SimHash and MinHash locality-sensitive signatures for near-duplicate clustering.
-- `payload_detect_shellcode`: Deep heuristic inspection for x86/x64 shellcode, NOP sleds, GetPC, and syscalls.
-- `payload_waf_rules`: Synthesize ModSecurity, Cloudflare, AWS WAF, and Suricata rules.
-- `payload_diagnostics`: Platform and toolchain health check.
+Tools: `payload_analyze`, `payload_deobfuscate`, `payload_entropy`, `payload_waf_rules`, `payload_diagnostics`, `payload_polyglot_audit`, `payload_ast_obfuscation`, `payload_markov_profile`, `payload_lsh_fingerprint`, `payload_detect_shellcode`.
 
----
+### REST (`server.py`, `127.0.0.1:8080`)
 
-## 📐 Mathematical Foundations
+`POST` routes take `{"payload": "..."}` and reject non-localhost `Origin` headers.
 
-### Shannon Entropy Formulation
-Shannon Entropy measures the average rate at which information is produced by a stochastic data source. For an arbitrary payload of bytes $X = (x_1, x_2, \dots, x_N)$ over the byte alphabet $\Sigma = \{0, 1, \dots, 255\}$:
-
-$$H(X) = -\sum_{i=0}^{255} p(x_i) \log_2 p(x_i) \quad (\text{bits per byte})$$
-
-where $p(x_i) = \frac{\text{count}(x_i)}{N}$ denotes the empirical probability of occurrence for byte value $x_i$.
-
-### Entropy Threshold Classification Spectrum
-
-| Entropy Range ($H(X)$) | Classification | Typical Payloads & Attack Signatures |
+| Method | Route | Description |
 | :--- | :--- | :--- |
-| **0.00 – 1.50 bits** | Uniform / Highly Repetitive | Padding sequences (`\x00*1000`), NOP sleds (`\x90*500`) |
-| **1.50 – 4.50 bits** | Natural Language & HTML | Plaintext HTTP requests, JSON bodies, English queries |
-| **4.50 – 5.60 bits** | Source Code & Scripts | JavaScript vectors, SQL queries, PHP scripts |
-| **5.60 – 6.80 bits** | Obfuscated & Encoded Data | Base64-encoded blobs, URL-encoded exploit chains |
-| **6.80 – 8.00 bits** | High-Entropy / Packed / Crypto | Polymorphic shellcode, encrypted C2 payloads, AES ciphertext |
-
-### Kolmogorov Complexity Approximation
-Because true algorithmic Kolmogorov Complexity $K(s)$ is formally uncomputable, this studio computes a practical upper bound via DEFLATE/Zlib algorithmic compression ratio:
-
-$$\hat{K}(s) = \frac{|\text{Compress}(s)|}{|s|}$$
-
----
-
-## 🏛️ Architecture
-
-```mermaid
-flowchart TD
-    subgraph Input["📥 Ingestion Layer"]
-        Raw["Raw Inbound Request / Payload"]
-    end
-
-    subgraph Core["⚙️ Analysis Engine (Zero Runtime Deps)"]
-        Deobf["🔓 Recursive De-obfuscator\n(URL, Hex, Base64, Unicode, Entities)"]
-        Entropy["📊 Fast 256-Bin Entropy Engine\n(Shannon H(X), Sliding Window, Zlib)"]
-        Threat["🛡️ Signature Matcher\n(CWE, MITRE ATT&CK, Regex Engine)"]
-        WAF["🧱 Rule Synthesizer\n(ModSec CRS, Cloudflare, AWS, Suricata)"]
-    end
-
-    subgraph Interfaces["🖥️ Multi-Channel Interfaces"]
-        CLI["💻 CLI Entrypoint\n(payload-entropy / python -m)"]
-        MCP["🤖 FastMCP Stdio Server\n(Claude / Cursor / Cline)"]
-        UI["🎨 Payload Entropy Studio\n(Waveform Canvas & 256-Bin Spectrum)"]
-    end
-
-    Raw --> Deobf
-    Deobf --> Entropy
-    Deobf --> Threat
-    Threat --> WAF
-    Entropy --> Interfaces
-    Threat --> Interfaces
-    WAF --> Interfaces
-```
-
----
-
-## 🐍 Python SDK API Reference
-
-```python
-from payload_entropy_studio.entropy_engine import analyze_entropy_profile, calculate_shannon_entropy
-from payload_entropy_studio.threat_analyzer import ThreatAnalyzer
-from payload_entropy_studio.waf_generator import generate_waf_rules
-
-# 1. Calculate Shannon Entropy & 256-bin spectrum
-report = analyze_entropy_profile("SELECT * FROM users WHERE id=1;")
-print(f"Entropy: {report.shannon_entropy:.2f} bits/byte")
-print(f"Classification: {report.classification.value}")
-print(f"Printable ASCII: {report.char_classes['printable_pct']:.1f}%")
-
-# 2. Perform deep multi-vector threat analysis
-analyzer = ThreatAnalyzer()
-threat_report = analyzer.analyze("<script>alert(document.cookie)</script>")
-print(f"Threat: {threat_report.primary_threat} (Score: {threat_report.risk_score}/100)")
-print(f"CWE: {threat_report.cwe_mappings}")
-print(f"MITRE ATT&CK: {threat_report.mitre_attack_mappings}")
-
-# 3. Synthesize production WAF rules
-rules = generate_waf_rules(threat_report)
-print(rules["modsecurity"])
-```
-
----
-
-## 🧪 Running Tests
+| `GET` | `/health`, `/api/health` | Health, version, uptime |
+| `GET` | `/api/diagnostics` | Platform info |
+| `POST` | `/api/analyze` | Threat analysis |
+| `POST` | `/api/deobfuscate` | Decoding layers |
+| `POST` | `/api/entropy` | Entropy profile |
+| `POST` | `/api/waf` | WAF rules |
+| `POST` | `/api/polyglot` | Polyglot audit |
+| `POST` | `/api/ast-obfuscation` | Grammar evasion analysis |
+| `POST` | `/api/markov` | Markov profile |
+| `POST` | `/api/lsh` | SimHash / MinHash |
+| `POST` | `/api/shellcode` | Shellcode heuristics |
 
 ```bash
-pytest -v
+curl -s http://127.0.0.1:8080/health
+curl -s -X POST http://127.0.0.1:8080/api/analyze -H 'Content-Type: application/json' -d '{"payload":"<script>alert(1)</script>"}'
 ```
 
----
+## Port
 
-## 📜 License & Attribution
-- **Engineered by:** 1nc0gn30 • NullAI ([@1nc0gn30](https://github.com/1nc0gn30)) • [NullAI Platform](https://nullai.tech)
-- **License:** MIT License © 2026 1nc0gn30 • NullAI
+`127.0.0.1:8080` — matches the `payload-entropy-studio` entry in Zoth Studio v2 `tools.json`. Override with `PORT` (for `server.py`, `bin/payload-entropy.js`, `electron/main.cjs`) or `PAYLOAD_ENTROPY_PORT` / `--port` (for `payload-entropy serve`). On ZothOS v3.4.0 the `payload-entropy` binary and `payload-entropy.desktop` launcher use the same port.
 
----
-
-## 🏛️ ZothOS v3.4, Zoth Studio v2 & Obsidian Second Brain Ecosystem
-
-### Cross-Surface Integration Matrix
-
-| Surface | Endpoint / Binary | Capabilities |
-| :--- | :--- | :--- |
-| **Standalone Workstation** | `http://127.0.0.1:8195` | 100% Free & Open-Access Web Deck, live `/health` & REST telemetry |
-| **Zoth Studio v2 Route** | `http://127.0.0.1:3000/tools/payload-entropy-studio` | Interactive God-Mode component inside Zoth Studio (`https://zoth.nullai.tech`) |
-| **ZothOS v3.4 CLI & TUI** | `payload-entropy-studio` / `payload-entropy-studio-tui` | Global binary in `/usr/local/bin/` with Unicode `U+2800` Braille TUI & `--json` output |
-| **ZothOS-Lite Web Desktop** | `http://127.0.0.1:8145` | Browser-native KDE-style window manager & terminal launcher |
-| **Zoth Obsidian Tracker** | `http://127.0.0.1:8151` | Interactive Obsidian Second Brain vault explorer (`~/Documents/Obsidian Vault/Studio/Tools/Studio payload-entropy-studio.md`) |
-| **Neuro-Memory STDP Cortex** | `http://127.0.0.1:8094` | 3-Factor STDP synaptic memory daemon & 21-tool MCP server |
+## Testing
 
 ```bash
-# Inspect CLI & Unicode U+2800 Braille TUI on ZothOS v3.4
-payload-entropy-studio --help
-payload-entropy-studio-tui --status
-payload-entropy-studio-tui --json
-
-# Verify Second Brain Vault & 12-Step Verification Gallery on :8151
-zoth-obsidian-tracker --verify
+python3 -m pip install pytest
+python3 -m pytest -q          # or: npm test
+payload-entropy test-self
 ```
 
+Server tests bind to ephemeral ports. `scripts/verify_ui.py` is an optional Playwright harness for triple-viewport UI checks against a running server (`PAYLOAD_ENTROPY_URL`).
+
+## License
+
+MIT. Copyright (c) 2026 [1nc0gn30](https://1nc0gn30.si) and [NullAI](https://nullai.tech). See [LICENSE](LICENSE).
+
+Free and open source. Optional support: [Buy Us a Coffee (Stripe)](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X).

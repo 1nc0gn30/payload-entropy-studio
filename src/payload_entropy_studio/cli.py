@@ -38,11 +38,44 @@ class Colors:
         self.RESET = "" if disabled else "\033[0m"
 
 
+DEFAULT_PORT = int(os.environ.get("PAYLOAD_ENTROPY_PORT", "8080"))
+
+
+def _diagnostics() -> dict:
+    return {
+        "tool": "payload-entropy-studio",
+        "version": "0.1.0",
+        "platform": sys.platform,
+        "python_version": sys.version.split()[0],
+        "zero_runtime_deps": True,
+        "default_port": DEFAULT_PORT,
+        "status": "healthy",
+    }
+
+
+def _status(host: str = "127.0.0.1", port: Optional[int] = None) -> dict:
+    """Probe the loopback daemon's /health endpoint."""
+    import urllib.request
+
+    port = int(port or DEFAULT_PORT)
+    url = f"http://{host}:{port}/health"
+    result: dict = {"tool": "payload-entropy-studio", "url": url, "online": False}
+    try:
+        with urllib.request.urlopen(url, timeout=1.5) as resp:  # noqa: S310 - loopback only
+            result["online"] = resp.status == 200
+            result["health"] = json.loads(resp.read().decode("utf-8") or "{}")
+    except Exception as exc:  # pragma: no cover - depends on host state
+        result["error"] = str(exc)
+    return result
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Construct CLI argument parser."""
     parser = argparse.ArgumentParser(
         prog="payload-entropy",
         description="Security Payload Analyzer, Shannon Entropy Profiler & WAF Rule Synthesizer",
+        epilog="Top-level shortcuts:\n  --json     Print diagnostics as JSON\n  --status   Probe the loopback daemon (127.0.0.1:8080/health) and print JSON",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("-v", "--version", action="version", version="payload-entropy-studio 0.1.0")
 
@@ -102,13 +135,19 @@ def build_parser() -> argparse.ArgumentParser:
     # serve
     p_serve = sub.add_parser("serve", parents=[base], help="Start Payload Studio Web UI (Material 3 influenced)")
     p_serve.add_argument("--host", default="127.0.0.1", help="Host address (default: 127.0.0.1; use 0.0.0.0 only on trusted networks)")
-    p_serve.add_argument("--port", type=int, default=8095, help="Port (default: 8095)")
+    p_serve.add_argument("--port", type=int, default=None, help="Port (default: 8080, or $PAYLOAD_ENTROPY_PORT)")
 
     # mcp
     p_mcp = sub.add_parser("mcp", parents=[base], help="Run Model Context Protocol stdio server")
 
     # diagnostics / doctor
     p_doc = sub.add_parser("doctor", aliases=["diagnostics", "platform"], parents=[base], help="Run system diagnostics")
+    p_doc.add_argument("--json", action="store_true", help="Output diagnostics as JSON")
+
+    # status
+    p_status = sub.add_parser("status", parents=[base], help="Probe the loopback web daemon /health endpoint")
+    p_status.add_argument("--host", default="127.0.0.1", help="Daemon host (default: 127.0.0.1)")
+    p_status.add_argument("--port", type=int, default=None, help="Daemon port (default: 8080)")
 
     # test-self
     p_tself = sub.add_parser("test-self", parents=[base], help="Run internal self-verification test runner")
@@ -124,6 +163,13 @@ def main(argv: Optional[List[str]] = None) -> int:
     parser = build_parser()
     if not argv:
         parser.print_help()
+        return 0
+
+    if argv[0] == "--json":
+        print(json.dumps(_diagnostics(), indent=2))
+        return 0
+    if argv[0] == "--status":
+        print(json.dumps(_status(), indent=2))
         return 0
 
     args = parser.parse_args(argv)
@@ -363,8 +409,9 @@ def main(argv: Optional[List[str]] = None) -> int:
         return 0
 
     elif args.command == "serve":
-        server = run_ui_server(args.host, args.port)
-        print(f"{c.GREEN}🛡️ Payload & Entropy Studio UI running at:{c.RESET} http://{args.host}:{args.port}")
+        port = args.port if args.port is not None else DEFAULT_PORT
+        server = run_ui_server(args.host, port)
+        print(f"{c.GREEN}Payload & Entropy Studio UI running at:{c.RESET} http://{args.host}:{server.server_address[1]}")
         try:
             server.serve_forever()
         except KeyboardInterrupt:
@@ -375,7 +422,14 @@ def main(argv: Optional[List[str]] = None) -> int:
         run_mcp_server()
         return 0
 
+    elif args.command == "status":
+        print(json.dumps(_status(args.host, args.port), indent=2))
+        return 0
+
     elif args.command in ("doctor", "diagnostics", "platform"):
+        if getattr(args, "json", False):
+            print(json.dumps(_diagnostics(), indent=2))
+            return 0
         print(f"\n{c.BOLD}🛡️ Payload Entropy Studio - System Diagnostics{c.RESET}")
         print(f"  Platform         : {sys.platform}")
         print(f"  Python Version   : {sys.version.split()[0]}")

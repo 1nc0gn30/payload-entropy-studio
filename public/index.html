@@ -82,7 +82,7 @@
             "name": "How can I support Payload & Entropy Studio?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Payload & Entropy Studio is 100% free and open-access by default with zero paywalls. You can support the project via Buy Us a Coffee (Stripe) or tip via Solana (GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)."
+              "text": "Payload & Entropy Studio is 100% free and open source. Optional support is available via Buy Us a Coffee (Stripe)."
             }
           }
         ]
@@ -428,45 +428,6 @@
       color: #f1f2f6;
     }
 
-    /* Paywall */
-    .paywall-wrap {
-      position: relative;
-      border-radius: var(--radius);
-      overflow: hidden;
-      margin-top: 1.2rem;
-    }
-    .paywall-content.locked {
-      filter: none;
-      pointer-events: none;
-      user-select: none;
-      opacity: 0.4;
-    }
-    .paywall-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: rgba(9, 10, 15, 0.75);
-      backdrop-filter: none;
-      z-index: 20;
-      padding: 1.5rem;
-      text-align: center;
-    }
-    .paywall-wrap:not(.is-locked):not(.locked) .paywall-overlay {
-      display: none !important;
-    }
-    .paywall-wrap:not(.is-locked):not(.locked) .paywall-content.locked,
-    .paywall-wrap:not(.is-locked):not(.locked) .paywall-content {
-      filter: none !important;
-      pointer-events: auto !important;
-      user-select: auto !important;
-      opacity: 1 !important;
-    }
 
     /* Glassmorphic Toast Notification */
     .toast-container {
@@ -568,45 +529,13 @@
   <link rel="stylesheet" href="wave-states.css">
   <link rel="stylesheet" href="wave-type.css">
 
-  <!-- Zoth 100% Open-Access & Buy Us a Coffee Invariant -->
-  <script id="zoth-open-access-init">
-    (function() {
-      try {
-        var keys = ['agent_audiocipher_pro', 'agent_cyber_turtle_pro', 'agent_datamosh_pro', 'agent_nexus3d_pro', 'agent_policy_pro', 'audiocipher_license', 'audiocipher_pro_licensed', 'badge3d_pro_licensed', 'certpath_pro_key', 'certpath_pro_licensed', 'cron_rhythm_pro_key', 'cron_rhythm_pro_licensed', 'cwv-speed-engine_pro_licensed', 'cwv_pro_licensed', 'cyber_turtle_pro_licensed', 'datamosh_pro_licensed', 'deepsearch-research-agent_pro_licensed', 'deepsearch_pro_licensed', 'entropy_studio_licensed', 'envguard-secrets-vault_pro_licensed', 'envguard_pro_license', 'etsy_connector_pro', 'jwt_guard_licensed', 'mdg_pro_licensed', 'neuro_pro_licensed', 'nexus3d_pro_licensed', 'omnipost_pro_key', 'omnipost_pro_licensed', 'osint_pro_licensed', 'payload-entropy-studio_pro_licensed', 'polyglot_pro_licensed', 'pro_licensed', 'promptmaster_pro_licensed', 'promptmaster_pro_active', 'robots-txt-auditor_pro_licensed', 'robots_pro_licensed', 'schema_illustrator_pro_licensed', 'sovereign_pro_licensed', 'subsweep-lead-scanner_pro_licensed', 'subsweep_licensed', 'turtle_pro_licensed', 'ufo_sacred_licensed', 'vector-search-engine_pro_licensed', 'vector_studio_pro_licensed', 'web-security-guard_pro_licensed', 'web_security_guard_licensed', 'yourdigitalspace_pro', 'zela_guide_pro_licensed', 'zoth_ascii_magic_pro', 'zoth_audiocipher_licensed', 'zoth_badge3d_licensed', 'zoth_cyber_turtle_licensed', 'zoth_datamosh_licensed', 'zoth_etsy_licensed', 'zoth_nexus3d_licensed', 'zoth_osint_licensed', 'zoth_policy_licensed', 'zoth_sacred_licensed', 'zoth_ufo_licensed'];
-        for (var i = 0; i < keys.length; i++) {
-          localStorage.setItem(keys[i], 'true');
-        }
-        localStorage.setItem('pm_license_v2', JSON.stringify({ method: 'open_access', ref: 'free_forever', at: '2026-01-01T00:00:00Z' }));
-        window.isPro = true;
-        window.isProLicensed = true;
-      } catch (e) {}
-    })();
-  </script>
-  <style id="zoth-open-access-override">
-    .paywall-overlay, .output-paywall-overlay, #outputPaywallOverlay, #schemaPaywallOverlay,
-    #transformerPaywallOverlay, #proPaywallModal, #licenseModal, #salesBanner, .sales-banner, #founding-offer-banner,
-    #funnelHeroBanner, .modal-backdrop, [data-alias="salesBannerWrap"], [data-alias="paywallOverlay"], [data-alias="founding-offer-banner"] {
-      display: none !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
-    .paywall-wrap #outputPreview, .paywall-wrap #reportContentArea, .paywall-content,
-    .paywall-content.locked, .paywall-wrap.is-locked #outputPreview, .paywall-wrap.locked #outputPreview,
-    #wafPaywallWrap, #wafPaywallContent, .locked, .is-locked {
-      filter: none !important;
-      -webkit-filter: none !important;
-      user-select: auto !important;
-      pointer-events: auto !important;
-    }
-  </style>
 
 </head>
 <body>
 
 <div id="zoth-coffee-support-bar" style="background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(212,175,55,0.14)); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; z-index: 9999;">
-  <span style="color: #10B981; font-weight: 800;">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS</span>
+  <span style="color: #10B981; font-weight: 800;">✦ 100% FREE &amp; OPEN SOURCE</span>
   <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="background: #D4AF37; color: #08080B; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">☕ Buy Us a Coffee (Stripe)</a>
-  <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="if(navigator.clipboard){navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied GG2eQb...dXoK!';}" style="background: rgba(20,241,149,0.15); color: #14F195; border: 1px solid rgba(20,241,149,0.45); padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">◎ Solana Tip (GG2e...dXoK)</a>
 </div>
 
 
@@ -620,7 +549,7 @@
     </div>
     <div class="header-badges" style="display:flex; flex-wrap:wrap; align-items:center; gap:0.5rem;">
       <span class="badge badge-egress">ZERO CLOUD EGRESS</span>
-      <span class="badge badge-pro" id="licenseBadge" style="color: #10B981; border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.15); font-weight: 800;">✦ 100% UNLOCKED</span>
+      <span class="badge badge-pro" id="openBadge" style="color: #10B981; border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.15); font-weight: 800;">✦ 100% UNLOCKED</span>
     </div>
   </header>
 
@@ -769,12 +698,8 @@
       clean: '{"userId":"usr_4821","action":"checkout","amount":19.00,"currency":"USD","signature":"valid_token_sample"}'
     };
 
-    let isProLicensed = true;
     let currentWafPlatform = 'modsec';
 
-    function isProUser() {
-      return true;
-    }
 
     // --- Glassmorphic Toast & Non-Blocking Notification ---
     function showToast(msg) {
@@ -797,26 +722,6 @@
     }
     window.alert = showToast;
 
-    function checkLicense() {
-      isProLicensed = true;
-
-      const wrap = document.getElementById('wafPaywallWrap') || document.getElementById('cosolanaTipwallWrap');
-      const content = document.getElementById('wafPaywallContent');
-      const badge = document.getElementById('licenseBadge') || document.getElementById('headerProBadge');
-      const banner = document.getElementById('salesBanner') || document.getElementById('salesBannerWrap');
-      const activateBtn = document.getElementById('activateKeyBtn');
-
-      if (wrap) wrap.classList.remove('is-locked', 'locked');
-      if (content) content.classList.remove('locked', 'is-locked');
-      if (badge) {
-        badge.textContent = '✦ 100% UNLOCKED';
-        badge.style.color = '#10B981';
-        badge.style.borderColor = 'rgba(16, 185, 129, 0.4)';
-        badge.style.background = 'rgba(16, 185, 129, 0.15)';
-      }
-      if (banner) banner.style.display = 'none';
-      if (activateBtn) activateBtn.style.display = 'none';
-    }
 
     function loadPreset(key) {
       if (!PRESETS[key]) return;
@@ -1181,7 +1086,6 @@ alert tcp any any -> $HTTP_SERVERS $HTTP_PORTS (
 
     // --- Init ---
     window.addEventListener('DOMContentLoaded', () => {
-      checkLicense();
       loadPreset('sql');
     });
   </script>

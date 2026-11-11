@@ -342,7 +342,7 @@ class PayloadHTTPHandler(BaseHTTPRequestHandler):
         pass
 
 
-def run_ui_server(host: str = "127.0.0.1", port: int = 8095) -> ThreadingHTTPServer:
+def run_ui_server(host: str = "127.0.0.1", port: int = 8080) -> ThreadingHTTPServer:
     """Launch UI HTTP Server."""
     server = ThreadingHTTPServer((host, port), PayloadHTTPHandler)
     return server
