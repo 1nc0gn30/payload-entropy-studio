@@ -98,7 +98,7 @@ select.sample-picker:focus-visible,
 .btn-solana:focus-visible,
 .modal-close:focus-visible,
 input.text-input:focus-visible,
-.badge-pro:focus-visible {
+.badge-open:focus-visible {
   outline: 2px solid var(--gold) !important;
   outline-offset: 2px !important;
   box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.25) !important;

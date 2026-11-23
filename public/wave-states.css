@@ -36,7 +36,7 @@ select.sample-picker:focus-visible,
   box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.2) !important;
 }
 
-.badge-pro:focus-visible,
+.badge-open:focus-visible,
 #openBadge:focus-visible {
   outline: 2px solid var(--gold) !important;
   outline-offset: 2px !important;
@@ -116,11 +116,11 @@ footer.zoth-footer a:focus-visible,
   transform: scale(1.1);
 }
 
-.badge-pro {
+.badge-open {
   transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.badge-pro:hover {
+.badge-open:hover {
   background: rgba(255, 215, 0, 0.22);
   border-color: var(--gold);
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.25);
@@ -245,7 +245,7 @@ input.text-input:invalid:not(:placeholder-shown) {
   .btn-activate,
   .btn-sm,
   .modal-close,
-  .badge-pro {
+  .badge-open {
     transform: none !important;
     transition: none !important;
   }

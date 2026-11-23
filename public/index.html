@@ -34,7 +34,7 @@
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": ["WebApplication", "SoftwareApplication"],
         "@id": "https://entropystudio.nullai.tech/#webapp",
         "name": "Payload & Entropy Studio",
         "url": "https://entropystudio.nullai.tech",
@@ -190,7 +190,7 @@
       color: var(--accent-green);
       border-color: rgba(46, 213, 115, 0.3);
     }
-    .badge-pro {
+    .badge-open {
       background: rgba(255, 215, 0, 0.12);
       color: var(--gold);
       border-color: rgba(255, 215, 0, 0.35);
@@ -556,7 +556,7 @@
     </div>
     <div class="header-badges" style="display:flex; flex-wrap:wrap; align-items:center; gap:0.5rem;">
       <span class="badge badge-egress">ZERO CLOUD EGRESS</span>
-      <span class="badge badge-pro" id="openBadge" style="color: #10B981; border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.15); font-weight: 800;">✦ 100% UNLOCKED</span>
+      <span class="badge badge-open" id="openBadge" style="color: #10B981; border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.15); font-weight: 800;">✦ 100% UNLOCKED</span>
     </div>
   </header>
 
